@@ -521,3 +521,14 @@ a:hover {
     height: 68vh;
     overflow-y: auto;
 }
+
+.tagsAndQuestions{
+    margin-top: 20px;
+    height: 60vh;
+    overflow-y: auto;
+}
+
+html, body {
+    height: 100%;  /* Ensures the html and body take up the full viewport height */
+    overflow: hidden;  /* Prevents scrolling on the entire page */
+}
