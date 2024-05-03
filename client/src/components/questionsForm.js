@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import axios from "axios";
 import {renderNewestQuestions} from "../request-functions/request-functions"
 
-export default function QuestionsForm({setMode, setRenderedQuestions}) {
+export default function QuestionsForm({setMode, setRenderedQuestions, user}) {
     const [title, setTitle] = useState('');
     const [questionText, setQuestionText] = useState('');
     const [tags, setTags] = useState('');
-    const [username, setUsername] = useState('');
+    const username = user.username;
     const [errors, setErrors] = useState({});
 
     const validateAndConvertHyperlinks = (text) => {
@@ -118,7 +118,6 @@ export default function QuestionsForm({setMode, setRenderedQuestions}) {
             setTitle('');
             setQuestionText('');
             setTags('');
-            setUsername('');
             setErrors({});
             console.log("question posted successfully")
         } catch (error) {
@@ -150,11 +149,11 @@ export default function QuestionsForm({setMode, setRenderedQuestions}) {
                     <input type="text" value={tags} onChange={(e) => setTags(e.target.value)}/><br></br>
                     {errors.tags && <span className="errorIndicate" style={{color: 'red'}}>{errors.tags}</span>}
                 </div>
-                <div className="username" id="questionUsernames">
-                    <h2>Username*</h2>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} /><br></br>
-                    {errors.username && <span className="errorIndicate" style={{color: 'red'}}>{errors.username}</span>}
-                </div>
+                {/*<div className="username" id="questionUsernames">*/}
+                {/*    <h2>Username*</h2>*/}
+                {/*    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} /><br></br>*/}
+                {/*    {errors.username && <span className="errorIndicate" style={{color: 'red'}}>{errors.username}</span>}*/}
+                {/*</div>*/}
                 <div>
                     <button id="postQstnBtn" onClick={postQuestion}>Post Question</button><br></br>
                     <span className="red">* indicates mandatory fields</span>

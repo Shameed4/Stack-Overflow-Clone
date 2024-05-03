@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
-    const [username, setUsername] = useState('');
+export default function AnswerForm({ setMode, qstn, setVisitedQuestion, user}) {
+    const username = user.username;
     const [answerText, setAnswerText] = useState('');
     const [errors, setErrors] = useState({});
 
@@ -85,7 +85,6 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
             // Update the UI based on the response or refetch answers
 
             // Reset the form fields after posting
-            setUsername('');
             setAnswerText('');
             setErrors({});
         } catch (error) {
@@ -99,20 +98,20 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
 
     return (
         <div className="form answerForm">
-            <div className="username" id="answerUsername">
-                <h2>Username*</h2>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <br />
-                {errors.username && (
-                    <span className="errorIndicate" style={{ color: 'red' }}>
-                        {errors.username}
-                    </span>
-                )}
-            </div>
+            {/*<div className="username" id="answerUsername">*/}
+            {/*    <h2>Username*</h2>*/}
+            {/*    <input*/}
+            {/*        type="text"*/}
+            {/*        value={username}*/}
+            {/*        onChange={(e) => setUsername(e.target.value)}*/}
+            {/*    />*/}
+            {/*    <br />*/}
+            {/*    {errors.username && (*/}
+            {/*        <span className="errorIndicate" style={{ color: 'red' }}>*/}
+            {/*            {errors.username}*/}
+            {/*        </span>*/}
+            {/*    )}*/}
+            {/*</div>*/}
             <div className="answerInput" id="answerInput">
                 <h2>Answer Text*</h2>
                 <textarea
