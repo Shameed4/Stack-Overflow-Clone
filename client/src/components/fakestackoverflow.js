@@ -41,7 +41,7 @@ export default function FakeStackOverflow() {
 
   return (
       <div className="App">
-        <Header setRenderedQuestions={setRenderedQuestions} setMode={setMode} user={user}/>
+        <Header setRenderedQuestions={setRenderedQuestions} setMode={setMode} user={user} page={page} setUser={setUser} setPage={setPage}/>
           {
               (() => {
                   switch (page) {

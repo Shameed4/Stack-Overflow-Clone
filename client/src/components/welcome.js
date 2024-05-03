@@ -6,7 +6,7 @@ export default function Welcome({setPage, user, setUser}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const [loginError, setLoginError] = useState(false);
+    const [loginError, setLoginError] = useState('');
     const [signupError, setSignupError] = useState('');
 
     const validateEmail = (email) => {
@@ -15,7 +15,7 @@ export default function Welcome({setPage, user, setUser}) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setLoginError(false);
+        setLoginError('');
         try {
             const response = await axios.post('http://localhost:8000/api/users/login', {
                 email,
@@ -31,7 +31,7 @@ export default function Welcome({setPage, user, setUser}) {
             }
         } catch (error) {
             console.error('Failed to log in:', error.response ? error.response.data.message : error.message);
-            setLoginError(true);
+            setLoginError(error.response ? error.response.data.message : error.message);
         }
     };
 
@@ -75,7 +75,7 @@ export default function Welcome({setPage, user, setUser}) {
                             <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}
                                    style={{ borderColor: loginError ? 'red' : 'none' }}/>
                             <button type="submit" className='LoginButton'>Login</button>
-                            {loginError && <p style={{color: 'red'}}>Invalid credentials, please try again.</p>}
+                            {loginError && <p style={{color: 'red'}}>{loginError}</p>}
                         </form>
                         <p>Don't have an account? <a onClick={() => setForm('signup')}>Sign up</a></p>
                         <p>Continue as <a onClick={() => {setPage(1);}}>Guest</a></p>

@@ -15,7 +15,8 @@ export default function Question({ qstn, visitThisQstn }) {
                 <span className="viewCount">{qstn.views} view{qstn.views !== 1 ? 's' : ''}</span>
             </div>
             <div className="question-mid">
-                <span className="question-title" onClick={()=>{handleQuestionClick(visitThisQstn, qstn)}}>{qstn.title}</span>
+                <span className="question-title" onClick={()=>{handleQuestionClick(visitThisQstn, qstn)}}>{qstn.title}</span><br></br>
+                <span className="questions-summary">{qstn.text}</span>
                 <div className="tag-list">
                     {tagNames.map((tagName, index) => (
                         <span className="tag" key={index}>{tagName}</span>

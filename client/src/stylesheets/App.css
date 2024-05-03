@@ -23,6 +23,7 @@ body {
     display: flex;
     align-items: center;
     grid-area: header;
+    border-top: 3px solid orange;
 }
 
 #header>input {
@@ -248,8 +249,9 @@ h6 {
 }
 
 .logo{
-    width: 45px;
+    width: 200px;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 h1 {
@@ -268,12 +270,14 @@ h1 {
 }
 
 #searchBar {
-    padding: 8px;
+    padding: 10px;
     font-size: 16px;
     width: 300px; /* Adjust width based on design */
     margin-right: 30px;
+    margin-top: 5px;
     border-radius: 5px;
     border: 1px solid black;
+    height: 30px;
 }
 
 .stackoverflow{
@@ -411,3 +415,34 @@ a:hover {
     text-decoration: underline;
 }
 
+.SearchAndName{
+    display: flex;
+}
+
+.nameAndLogOut{
+    display: flex;
+}
+
+.nameAndLogOut a{
+    margin: 11.5px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.questions-summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    color: #535353;
+}
+
+.question div{
+    margin-top: 5px;
+}
+
+.question .question-mid span{
+    margin: 5px;
+}
