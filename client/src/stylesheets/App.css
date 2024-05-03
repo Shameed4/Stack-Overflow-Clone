@@ -1,1 +1,413 @@
 /* Add your CSS here */
+
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#header {
+    border-bottom: 0.5px solid #575757;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    grid-area: header;
+}
+
+#header>input {
+    height: 30px;
+}
+
+#main {
+    display: flex;
+    flex-grow: 1;
+}
+
+#col1 {
+    grid-area: col1;
+    width: 250px;
+    border-right: 0.5px solid #575757;
+}
+
+#col1>div {
+    text-align: center;
+    padding: 5px;
+    font-size: 1.1rem;
+    border-radius: 3px;
+    margin-top: 30px;
+}
+
+#col1>div:nth-child(2) {
+    margin-top: 10px;
+}
+
+#col1>div:hover {
+    background-color: lightgray;
+}
+
+#col2 {
+    grid-area: col2;
+    width: 100%;
+}
+
+#questionsGrid,
+.question, #postQuestionInfo, .answer {
+    border-bottom: 0.5px solid #575757;
+}
+
+#questionsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    padding: 5px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.question {
+    display: flex;
+    padding: 18px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.question-left {
+    width: 100px;
+    color: #555;
+}
+
+.question-mid {
+    flex: 1;
+    text-align: left;
+}
+
+.question-mid .question-title {
+    color: #1b75d0;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.question-mid .tag-list {
+    display: flex;
+    gap: 7px;
+    padding: 5px 0;
+}
+
+.question-mid .tag {
+    display: block;
+    background-color: #edf5fd;
+    border: none;
+    color: #155ca2;
+    border-radius: 5px;
+    padding: 5px 15px;
+    min-width: 50px;
+    text-align: center;
+
+}
+
+.asker {
+    color: rgb(200, 0, 0);
+}
+
+.answerer {
+    color: rgb(0, 100, 0);
+}
+
+.posted-time {
+    color: #555;
+}
+
+h6 {
+    margin: 5px;
+}
+
+.tagHeadings{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.tagsAndQuestions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 100px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    grid-gap: 10px; /* Optional: gap between items */
+}
+
+.tag{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-style: dashed;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 30px;
+    max-width: 300px;
+}
+
+.tag > .tagLink {
+    color: rgb(0, 136, 255);
+    font-size: 1rem;
+    background: none;
+    border: none;
+    padding: none;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#postTop1, #postTop2, .answer {
+    display: flex;
+    padding: 20px;
+}
+
+#postTop1 > *, #postTop2 > * {
+    width: 150px;
+}
+
+#postQuestionInfo > * > *:nth-child(2) {
+    width: auto;
+    flex: 1;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#askedInfo, .column-right {
+    font-size: 0.9rem;
+}
+
+.answer-description {
+    flex: 1;
+}
+
+.column-right {
+    width: 150px;
+    padding: 5px;
+}
+
+.btn {
+    background-color: rgb(0, 136, 255);
+    color: white;
+    padding: 0 6px;
+    border: 2px solid black;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+.btn:hover{
+    background-color: rgb(64, 107, 135);
+}
+
+
+#questionsTitle input{
+    border: 1px solid black;
+    width: 300px; height: 35px;
+}
+
+#questionTags input{
+    border: 1px solid black;
+    width: 300px; height: 35px;
+}
+
+#questionUsernames input{
+    border: 1px solid black;
+    width: 300px; height: 35px;
+}
+
+#postQstnBtn{
+    background-color: rgb(0, 136, 255);
+    color: white; margin: 10px 0;
+}
+
+.red{
+    color: red
+}
+
+.logo{
+    width: 45px;
+    margin-right: 10px;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* This ensures the header takes full width */
+    padding: 0 10px; /* Adjust padding to manage spacing at the edges of the header */
+    font-size: 12px;
+}
+
+#searchBar {
+    padding: 8px;
+    font-size: 16px;
+    width: 300px; /* Adjust width based on design */
+    margin-right: 30px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.stackoverflow{
+    margin-top: 3px;
+    margin-left: -8px;
+    font-weight: normal;
+}
+
+.overflow{
+    font-weight: bold;
+}
+
+.right-align {
+    display: flex; /* Using flexbox to align content */
+    justify-content: flex-end; /* Aligns children (buttons) to the right */
+    margin-right: 30px;
+}
+
+.sortButtons button{
+    border: none;
+    background: none;
+    margin: 5px;
+}
+
+.sortButtons{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.sortButtons button:focus{
+    background-color: #c6c6c6;
+    font-weight: bold;
+    border-radius: 3px;
+}
+
+.sortButtons button:hover{
+    background-color: #e8e8e8;
+}
+
+.AllQuestions{
+    font-weight: normal;
+}
+
+.AllQuestions, #questionCount{
+    margin-left: 30px;
+}
+
+.sortButtonsOut{
+    margin-bottom: 10px;
+}
+
+.asker{
+    color: rgb(0, 136, 255);
+}
+
+.tag:not(:first-child) {
+    margin-left: 30px;
+}
+
+.question-mid .question-title:hover{
+    color: #155ca3;
+}
+
+.welcome{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.form-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 340px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.WelcomeHeader{
+    margin-top: 80px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form input[type="email"], .form input[type="password"], .form button, .form input[type="text"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type="email"]:focus, input[type="password"]:focus {
+    border-color: #0056b3;
+}
+
+.form button {
+    background-color: #1b75d0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding-left: 65px;
+    padding-right: 65px;
+}
+
+.form button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
