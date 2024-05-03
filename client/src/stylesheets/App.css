@@ -492,7 +492,7 @@ a:hover {
 }
 
 .pagination-buttons{
-    margin: 30px;
+    margin: 20px;
     display: flex;
     justify-content: center;
 }
@@ -515,4 +515,9 @@ a:hover {
 
 .prevAndNext button:hover{
     background-color: #d6670d;
+}
+
+#questions {
+    height: 68vh;
+    overflow-y: auto;
 }
