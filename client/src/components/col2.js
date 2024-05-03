@@ -18,7 +18,7 @@ export default function Col2({ mode, setMode, renderedQuestions, setRenderedQues
                         case 2:
                             return <SinglePost qstn={visitedQuestion} setMode={setMode} user={user}/>
                         case 3:
-                            return <QuestionsForm setMode={setMode}/>
+                            return <QuestionsForm setMode={setMode} setRenderedQuestions={setRenderedQuestions}/>
                         case 4:
                             return <AnswerForm setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion}/>
                         default:

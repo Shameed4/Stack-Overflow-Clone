@@ -1,8 +1,30 @@
+import React, { useState } from 'react';
 import Question from "./question";
 import QstnButton from "../askQstnBtn";
 import { renderNewestQuestions, renderActiveQuestions, renderUnansweredQuestions } from "../../request-functions/request-functions";
 
 export default function AllPosts({ renderedQuestions, setRenderedQuestions, setVisitedQuestion, setMode, user}) {
+    const [currentPage, setCurrentPage] = useState(0);
+    const questionsPerPage = 5;
+
+    const lastQuestionIndex = (currentPage + 1) * questionsPerPage;
+    const firstQuestionIndex = lastQuestionIndex - questionsPerPage;
+    const currentQuestions = renderedQuestions.slice(firstQuestionIndex, lastQuestionIndex);
+
+    const handleNext = () => {
+        const nextPage = currentPage + 1;
+        if (lastQuestionIndex < renderedQuestions.length) {
+            setCurrentPage(nextPage);
+        }
+    };
+
+    const handlePrev = () => {
+        const prevPage = currentPage - 1;
+        if (prevPage >= 0) {
+            setCurrentPage(prevPage);
+        }
+    };
+
     return (
         <div className="AllPosts">
             <div id="questionsGrid">
@@ -20,11 +42,23 @@ export default function AllPosts({ renderedQuestions, setRenderedQuestions, setV
                 </div>
             </div>
             <div id="questions">
-                {renderedQuestions.map((qstn) => (
+                {currentQuestions.map((qstn) => (
                     <Question key={qstn._id} qstn={qstn} visitThisQstn={() => { setVisitedQuestion(qstn); setMode(2) }} />
                 ))}
-                {renderedQuestions.length === 0 && <h4>No questions found</h4>}
+                {currentQuestions.length === 0 && <h4>No questions found</h4>}
             </div>
+            {
+                renderedQuestions.length > 5 ? (
+                    <div className="pagination-buttons">
+                        <div className='prevAndNext'>
+                            <button disabled={currentPage === 0} onClick={handlePrev}>Prev</button>
+                            <button disabled={lastQuestionIndex >= renderedQuestions.length} onClick={handleNext}>Next
+                            </button>
+                        </div>
+                    </div>
+
+                ): null
+            }
         </div>
     );
 }

@@ -92,7 +92,7 @@ export default function Welcome({setPage, user, setUser}) {
                             {signupError && <p style={{color: 'red'}}>{signupError}</p>}
                         </form>
                         <p>Already have an account? <a onClick={() => setForm('login')}>Log in</a></p>
-                        <p>Continue as <a onClick={() => {setPage(1);}}>Guest</a></p>
+                        <p>Continue as <a className="guestButton" onClick={() => {setPage(1);}}>Guest</a></p>
                     </div>
                 )}
             </div>

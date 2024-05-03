@@ -15,9 +15,11 @@ export default function Tags({ setRenderedQuestions, setMode }) {
     return (
         <div className="AllTags">
             <div className="tagHeadings">
-                <h1>{tags.length} Tags</h1>
-                <h1>All Tags</h1>
-                <QstnButton setMode={setMode} />
+                <div className='titleAndTags'>
+                    <h1>All Tags</h1>
+                    <h1>{tags.length} Tags</h1>
+                </div>
+                <QstnButton setMode={setMode}/>
             </div>
             <div className="tagsAndQuestions">
                 {tags.map(t => {
@@ -27,7 +29,7 @@ export default function Tags({ setRenderedQuestions, setMode }) {
                     return (
                         <div className="tag" key={t._id}>
                             <button class="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
-                            <h4>{numTagQuestions} question{numTagQuestions !== 1 ? 's' : ''}</h4>
+                            <h4 className='tagHeading'>{numTagQuestions} Question{numTagQuestions !== 1 ? 's' : ''}</h4>
                         </div>
                     )
                 })}

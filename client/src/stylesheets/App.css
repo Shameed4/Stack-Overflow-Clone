@@ -144,6 +144,7 @@ h6 {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+
 }
 
 .tagsAndQuestions{
@@ -151,17 +152,17 @@ h6 {
     justify-content: center;
     align-items: center;
     justify-content: space-around;
-    margin-top: 100px;
+    margin: 100px;
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 columns */
     grid-gap: 10px; /* Optional: gap between items */
+
 }
 
 .tag{
     display: flex;
     flex-direction: column;
-    border: 1px solid black;
-    border-style: dashed;
+    border: 0.5px solid #575757;
     justify-content: center;
     align-items: center;
     padding: 5px 30px;
@@ -254,7 +255,7 @@ h6 {
     cursor: pointer;
 }
 
-h1 {
+#header h1 {
     display: flex;
     align-items: center;
     margin-left: 30px;
@@ -333,10 +334,6 @@ h1 {
     color: rgb(0, 136, 255);
 }
 
-.tag:not(:first-child) {
-    margin-left: 30px;
-}
-
 .question-mid .question-title:hover{
     color: #155ca3;
 }
@@ -409,6 +406,7 @@ input[type="email"]:focus, input[type="password"]:focus {
 a {
     color: #007bff;
     text-decoration: none;
+    cursor: pointer;
 }
 
 a:hover {
@@ -445,4 +443,76 @@ a:hover {
 
 .question .question-mid span{
     margin: 5px;
+}
+
+.tagsAndQuestions .tagLink{
+    background-color: #edf5fd;
+    border: none;
+    color: #155ca2;
+    border-radius: 5px;
+    padding: 5px 15px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.tagsAndQuestions .tag{
+    border-radius: 5px;
+}
+
+.tagsAndQuestions .tagLink:hover{
+    background-color: #d8dfef;
+}
+
+.titleAndTags{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tagHeadings{
+    justify-content: start;
+}
+
+.tagHeadings h1{
+    font-weight: normal;
+    margin: 10px;
+    margin-top: 30px;
+    margin-left: 100px;
+}
+
+.tagHeadings h1:nth-child(2){
+    margin-top: 8px;
+    font-size: medium;
+    margin-left: 70px;
+    color: #333333;
+}
+
+.tagHeading{
+    font-weight: normal;
+}
+
+.pagination-buttons{
+    margin: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.prevAndNext button{
+    margin: 5px;
+    background-color: #e7700d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.prevAndNext button:disabled{
+    background-color: #d6670d;
+    color: #cfcfcf;
+    cursor: not-allowed;
+}
+
+.prevAndNext button:hover{
+    background-color: #d6670d;
 }

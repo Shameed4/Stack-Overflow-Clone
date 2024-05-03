@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from "axios";
+import {renderNewestQuestions} from "../request-functions/request-functions"
 
-export default function QuestionsForm({setMode}) {
+export default function QuestionsForm({setMode, setRenderedQuestions}) {
     const [title, setTitle] = useState('');
     const [questionText, setQuestionText] = useState('');
     const [tags, setTags] = useState('');
@@ -110,6 +111,7 @@ export default function QuestionsForm({setMode}) {
         try {
             await axios.post('http://localhost:8000/api/questions', questionData);
             // Update the UI based on the response or refetch questions
+            await renderNewestQuestions(setRenderedQuestions); // Pass setRenderedQuestions to update the parent's state
             setMode(0);
 
             // Reset the form fields after posting
@@ -118,7 +120,7 @@ export default function QuestionsForm({setMode}) {
             setTags('');
             setUsername('');
             setErrors({});
-            console.log("question posted succesfully")
+            console.log("question posted successfully")
         } catch (error) {
             console.error('Error posting question:', error);
         }
