@@ -13,6 +13,19 @@ export const fetchAnswers = async (qstn, setAnswers) => {
     }
 };
 
+export const fetchQstnComments = async (qstn, setQstnComments) => {
+    try {
+        const commentsPromises = qstn.comments.map(commentId =>
+            axios.get(`http://localhost:8000/api/comments/${commentId}`)
+        );
+        const commentsResponses = await Promise.all(commentsPromises);
+        const fetchedComments = commentsResponses.map(response => response.data);
+        setQstnComments(fetchedComments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+    }
+};
+
 export const renderNewestQuestions = async setRenderedQuestions => {
     try {
         const response = await axios.get('http://localhost:8000/api/questions');

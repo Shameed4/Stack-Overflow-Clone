@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const Questions = require('./models/questions');
-const Tags = require('./models/tags')
-const Answers = require('./models/answers')
+const Tags = require('./models/tags');
+const Answers = require('./models/answers');
+const Comments = require("./models/comments");
 const Users = require('./models/users');
 const jwt = require('jsonwebtoken');
 
@@ -101,6 +102,17 @@ app.get('/api/questions/:qid', async (req, res) => {
     }
 });
 
+// Route to get comment by id
+app.get('/api/comments/:cid', async (req, res) => {
+    try {
+        console.log(req.params.cid);
+        const comment = await Comments.findById(req.params.cid);
+        res.json(comment);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Route to post a question
 app.post('/api/questions', verifySession, async (req, res) => {
     const { userId, signedIn } = req;
@@ -127,6 +139,79 @@ app.post('/api/questions', verifySession, async (req, res) => {
 
         res.status(201).json(newQuestion);
     } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+// Route to post answer
+app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
+    const { userId, signedIn } = req;
+    
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
+
+    try {
+        // Find the question
+        const question = await Questions.findById(req.params.qid);
+        const user = await Users.findById(userId);
+        const username = user.username;
+        console.log("Username", username);
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        // Create and save the new answer
+        const newAnswer = new Answers({
+            text: req.body.text,
+            ans_by: username,
+            ans_date_time: new Date(),
+        });
+        await newAnswer.save();
+
+        // Add the answer ID to the question's answers array and save the question
+        question.answers.push(newAnswer._id);
+        await question.save();
+
+        res.status(201).json(newAnswer);
+    } catch (error) {
+        console.log("bad answer, failed to post");
+        console.error(error);
+        res.status(400).json({ message: error.message });
+    }
+});
+
+// Route to post comment to question
+app.post('/api/questions/:qid/comments', verifySession, async (req, res) => {
+    const { userId, signedIn } = req;
+
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
+
+    try {
+        // Find the question
+        const question = await Questions.findById(req.params.qid);
+        const user = await Users.findById(userId);
+        const username = user.username;
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        // Create and save the new answer
+        const newComment = new Comments({
+            text: req.body.text,
+            com_by: username
+        });
+        await newComment.save();
+
+        // Add the answer ID to the question's answers array and save the question
+        question.comments.push(newComment._id);
+        await question.save();
+
+        res.status(201).json(newComment);
+    } catch (error) {
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 });
@@ -268,44 +353,6 @@ app.get('/api/comments/:id/votes', prepareComment, getTotalVotes);
 app.get('/api/comments/:id/votes/user', verifySession, prepareComment, getUserVotes)
 app.patch('/api/comments/:id/votes/toggle-upvote', verifySession, prepareComment, toggleUpvote);
 app.patch('/api/comments/:id/votes/toggle-downvote', verifySession, prepareComment, toggleDownvote);
-
-
-app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
-    const { userId, signedIn } = req;
-    
-    if (!signedIn)
-        return res.status(401).json("Not signed in");
-
-    try {
-        // Find the question
-        const question = await Questions.findById(req.params.qid);
-        const user = await Users.findById(userId);
-        const username = user.username;
-        console.log("Username", username);
-
-        if (!question) {
-            return res.status(404).json({ message: 'Question not found' });
-        }
-
-        // Create and save the new answer
-        const newAnswer = new Answers({
-            text: req.body.text,
-            ans_by: username,
-            ans_date_time: new Date(),
-        });
-        await newAnswer.save();
-
-        // Add the answer ID to the question's answers array and save the question
-        question.answers.push(newAnswer._id);
-        await question.save();
-
-        res.status(201).json(newAnswer);
-    } catch (error) {
-        console.log("bad answer, failed to post");
-        console.error(error);
-        res.status(400).json({ message: error.message });
-    }
-});
 
 // Function to insert tags and return their IDs (same as previously described)
 const insertTagsAndGetIds = async (tagNames) => {

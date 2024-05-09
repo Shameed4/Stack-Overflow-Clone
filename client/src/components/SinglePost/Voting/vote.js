@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getRating, getUserVote, toggleUserDownvote, toggleUserUpvote } from "../../request-functions/request-functions";
+import { getRating, getUserVote, toggleUserDownvote, toggleUserUpvote } from "../../../request-functions/request-functions";
 
 export default function Vote({ type, obj }) {
     const [ userRated, setUserRated ] = useState(0); // -1 if downvoted, 0 if unrated, 1 if upvoted

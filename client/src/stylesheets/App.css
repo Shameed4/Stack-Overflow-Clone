@@ -63,8 +63,13 @@ body {
 }
 
 #questionsGrid,
-.question, #postQuestionInfo, .answer {
+.question, #postQuestionInfo, .answer, .comment {
     border-bottom: 0.5px solid #575757;
+}
+
+.comment {
+    display: flex;
+    font-size: 0.75rem;
 }
 
 #questionsGrid {
@@ -559,7 +564,7 @@ html, body {
     transition: all 0.5s;
 }
 
-.votingButtons{
+/* .votingButtons{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -573,7 +578,7 @@ html, body {
     border-radius: 50%;
     background-color: white;
     border: 1px solid gray;
-}
+} */
 
 .rank{
     margin-top: 10px;

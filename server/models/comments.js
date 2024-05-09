@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema({
     downvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] }
 });
 
-answerSchema.virtual('url').get(function() {
+commentSchema.virtual('url').get(function() {
     return '/posts/comment/' + this._id;
 });
 
