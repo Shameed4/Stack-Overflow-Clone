@@ -6,7 +6,6 @@ import { renderNewestQuestions, renderActiveQuestions, renderUnansweredQuestions
 export default function AllPosts({ renderedQuestions, setRenderedQuestions, setVisitedQuestion, setMode, user}) {
     const [currentPage, setCurrentPage] = useState(0);
     const questionsPerPage = 5;
-
     const lastQuestionIndex = (currentPage + 1) * questionsPerPage;
     const firstQuestionIndex = lastQuestionIndex - questionsPerPage;
     const currentQuestions = renderedQuestions.slice(firstQuestionIndex, lastQuestionIndex);

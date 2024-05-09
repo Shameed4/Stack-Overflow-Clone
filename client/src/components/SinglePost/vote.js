@@ -26,16 +26,16 @@ export default function Vote({ qstn, user }) {
         toggleDownvote(qstn, user);
         fetchData();
     }
-    
+
     useEffect(() => {
         fetchData();
     });
 
     return (
-    <>
-        <button onClick={upvoteClick}>Upvote</button>
-        <span>{totalRated}</span>
-        <button onClick={downvoteClick}>Downvote</button>
-    </>
+    <div className='votingButtons'>
+        <button onClick={upvoteClick}>Up</button>
+        <span className='rank'>{totalRated}</span>
+        <button onClick={downvoteClick}>Down</button>
+    </div>
     )
 }

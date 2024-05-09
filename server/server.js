@@ -146,7 +146,7 @@ const verifySession = (req, res, next) => {
     }
 
     jwt.verify(token, 'goats', (err, decoded) => {
-        if (err) 
+        if (err)
             return res.status(401).json({ message: 'Session invalid' });
         req.signedIn = true;
         req.userId = decoded.userId;
@@ -219,14 +219,14 @@ app.get('/api/questions/:qid/votes/user', verifySession, async (req, res) => {
     console.log("Attempting to find user votse");
     const { qid } = req.params;
     const { userId, signedIn } = req;
-    
+
     try {
         const question = await Questions.findById(qid);
         if (!question) {
             console.log("Question not found");
             return res.status(404).json({ message: 'Question not found' });
         }
-        
+
         if (!signedIn)
             res.status(200).json(0);
         else if (question.upvoters.includes(userId))
@@ -319,7 +319,7 @@ app.post('/api/users/login', async (req, res) => {
 
         // Generate a token
         const token = jwt.sign(
-            { userId: user._id, username: user.username },
+            { userId: user._id, username: user.username, name: user.name},
             'goats', // Ensure your secret key is stored safely and is robust enough.
             { expiresIn: '1h' } // Token expires in 1 hour
         );
