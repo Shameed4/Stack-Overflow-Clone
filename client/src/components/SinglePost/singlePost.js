@@ -3,6 +3,7 @@ import QstnButton from "../askQstnBtn";
 import timeToString from "../../modules/timeToString";
 import { fetchAnswers } from "../../request-functions/request-functions";
 import QuestionVote from './questionVote';
+import AnswerVote from './answerVote';
 
 export default function SinglePost({ qstn, setMode, user }) {
     const [answers, setAnswers] = useState([]);
@@ -39,6 +40,7 @@ export default function SinglePost({ qstn, setMode, user }) {
                             <span className="answerer">{ans.ans_by}</span>
                             <span className="posted-time"> answered {timeToString(ans.ans_date_time)}</span>
                         </div>
+                        <AnswerVote ans={ans}></AnswerVote>
                     </div>
                 ))}
             </div>

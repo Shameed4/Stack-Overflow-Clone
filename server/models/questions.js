@@ -5,6 +5,7 @@ const questionSchema = new mongoose.Schema({
     title: { type: String, required: true },
     text: { type: String, required: true },
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
     answers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
     asked_by: { type: String, required: true, default: "Anonymous" },
     ask_date_time: { type: Date, default: Date.now }, // Set default value to current date and time

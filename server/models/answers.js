@@ -6,7 +6,8 @@ const answerSchema = new mongoose.Schema({
     ans_by: { type: String, required: true },
     ans_date_time: { type: Date, default: Date.now }, // Set default value to current date and time
     upvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
-    downvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] }
+    downvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
 });
 
 answerSchema.virtual('url').get(function() {

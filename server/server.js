@@ -76,6 +76,7 @@ app.get('/api/answers/:aid', async (req, res) => {
     }
 });
 
+// Route to get question by id
 app.get('/api/questions/:qid', async (req, res) => {
     try {
         const question = await Questions.findById(req.params.qid);
@@ -123,21 +124,6 @@ app.patch('/api/questions/:qid/increment-views', async (req, res) => {
     }
 });
 
-// Get number of upvotes to a question
-app.get('/api/questions/:qid/votes', async (req, res) => {
-    console.log("Upvotes checked");
-    try {
-        const question = await Questions.findById(req.params.qid);
-        res.status(200).json(question.upvoters.length - question.downvoters.length);
-        console.log("Success");
-    } catch (error) {
-        console.error(error);
-        console.log("Error found");
-        res.status(500).json({ message: error.message });
-        console.log("Failed");
-    }
-})
-
 // Middleware to verify the user session
 const verifySession = (req, res, next) => {
     const token = req.cookies.token;
@@ -154,29 +140,58 @@ const verifySession = (req, res, next) => {
     });
 };
 
+const prepareQuestion = (req, res, next) => {
+    req.Type = Questions;
+    next();
+}
+
+const prepareAnswer = (req, res, next) => {
+    req.Type = Answers;
+    next();
+}
+
+const prepareComment = (req, res, next) => {
+    req.Type = Comments;
+    next();
+}
+
+// Get number of upvotes to a question
+const getTotalVotes = async (req, res) => {
+    const { id } = req.params;
+    const { Type } = req;
+
+    console.log("ID TYPE", id, Type);
+
+    try {
+        const obj = await Type.findById(id);
+        res.status(200).json(obj.upvoters.length - obj.downvoters.length);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 const toggleUpvote = async (req, res) => {
-    const { qid } = req.params;
-    const { userId, signedIn } = req;
+    const { id } = req.params;
+    const { Type, userId, signedIn } = req;
 
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
     try {
-        const question = await Questions.findById(qid);
-        if (!question) {
-            return res.status(404).json({ message: 'Question not found' });
+        const obj = await Type.findById(id);
+        if (!obj) {
+            return res.status(404).json({ message: 'obj not found' });
         }
 
-        if (question.upvoters.includes(userId)) {
-            question.upvoters.pull(userId);
-            console.log("Removed upvote")
+        if (obj.upvoters.includes(userId)) {
+            obj.upvoters.pull(userId);
         } else {
-            question.upvoters.push(userId);
-            question.downvoters.pull(userId);
-            console.log("Added upvote")
+            obj.upvoters.push(userId);
+            obj.downvoters.pull(userId);
         }
 
-        await question.save();
+        await obj.save();
 
         res.status(200).json({ message: 'Upvote toggled successfully' });
     } catch (error) {
@@ -185,26 +200,26 @@ const toggleUpvote = async (req, res) => {
 };
 
 const toggleDownvote = async (req, res) => {
-    const { qid } = req.params;
-    const { userId, signedIn } = req;
+    const { id } = req.params;
+    const { Type, userId, signedIn } = req;
 
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
     try {
-        const question = await Questions.findById(qid);
-        if (!question) {
-            return res.status(404).json({ message: 'Question not found' });
+        const obj = await Type.findById(id);
+        if (!obj) {
+            return res.status(404).json({ message: 'obj not found' });
         }
 
-        if (question.downvoters.includes(userId)) {
-            question.downvoters.pull(userId);
+        if (obj.downvoters.includes(userId)) {
+            obj.downvoters.pull(userId);
         } else {
-            question.downvoters.push(userId);
-            question.upvoters.pull(userId);
+            obj.downvoters.push(userId);
+            obj.upvoters.pull(userId);
         }
 
-        await question.save();
+        await obj.save();
 
         res.status(200).json({ message: 'Upvote toggled successfully' });
     } catch (error) {
@@ -212,42 +227,52 @@ const toggleDownvote = async (req, res) => {
     }
 };
 
-app.patch('/api/questions/:qid/votes/toggle-upvote', verifySession, toggleUpvote);
-app.patch('/api/questions/:qid/votes/toggle-downvote', verifySession, toggleDownvote);
-
-app.get('/api/questions/:qid/votes/user', verifySession, async (req, res) => {
-    console.log("Attempting to find user votse");
-    const { qid } = req.params;
-    const { userId, signedIn } = req;
+const getUserVotes = async (req, res) => {
+    const { id } = req.params;
+    const { Type, userId, signedIn } = req;
     
     try {
-        const question = await Questions.findById(qid);
-        if (!question) {
-            console.log("Question not found");
-            return res.status(404).json({ message: 'Question not found' });
+        const obj = await Type.findById(id);
+        if (!obj) {
+            return res.status(404).json({ message: 'obj not found' });
         }
         
         if (!signedIn)
             res.status(200).json(0);
-        else if (question.upvoters.includes(userId))
+        else if (obj.upvoters.includes(userId))
             res.status(200).json(1);
-        else if (question.downvoters.includes(userId))
+        else if (obj.downvoters.includes(userId))
             res.status(200).json(-1);
         else
             res.status(200).json(0);
     } catch (error) {
-        console.log("Other error");
         res.status(400).json({ message: error.message });
     }
 
-})
+}
 
-app.post('/api/questions/:qid/answers', async (req, res) => {
-    const { qid } = req.params;
+app.get('/api/questions/:id/votes', prepareQuestion, getTotalVotes);
+app.get('/api/questions/:id/votes/user', verifySession, prepareQuestion, getUserVotes)
+app.patch('/api/questions/:id/votes/toggle-upvote', verifySession, prepareQuestion, toggleUpvote);
+app.patch('/api/questions/:id/votes/toggle-downvote', verifySession, prepareQuestion, toggleDownvote);
+
+app.get('/api/answers/:id/votes', prepareAnswer, getTotalVotes);
+app.get('/api/answers/:id/votes/user', verifySession, prepareAnswer, getUserVotes)
+app.patch('/api/answers/:id/votes/toggle-upvote', verifySession, prepareAnswer, toggleUpvote);
+app.patch('/api/answers/:id/votes/toggle-downvote', verifySession, prepareAnswer, toggleDownvote);
+
+app.get('/api/comments/:id/votes', prepareComment, getTotalVotes);
+app.get('/api/comments/:id/votes/user', verifySession, prepareComment, getUserVotes)
+app.patch('/api/comments/:id/votes/toggle-upvote', verifySession, prepareComment, toggleUpvote);
+app.patch('/api/comments/:id/votes/toggle-downvote', verifySession, prepareComment, toggleDownvote);
+
+
+app.post('/api/questions/:id/answers', async (req, res) => {
+    const { id } = req.params;
     const { userId } = req;
 
     try {
-        const question = await Questions.findById(qid);
+        const question = await Questions.findById(id);
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
