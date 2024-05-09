@@ -523,7 +523,11 @@ a:hover {
 }
 
 #questions {
-    height: 68vh;
+    overflow-y: auto;
+}
+
+.userQuestions #questions{
+    height: auto;
     overflow-y: auto;
 }
 
@@ -531,11 +535,6 @@ a:hover {
     margin-top: 20px;
     height: 60vh;
     overflow-y: auto;
-}
-
-html, body {
-    height: 100%;  /* Ensures the html and body take up the full viewport height */
-    overflow: hidden;  /* Prevents scrolling on the entire page */
 }
 
 .onlineError{
@@ -585,8 +584,11 @@ html, body {
     margin-bottom: 10px;
 }
 
-.ProfileName{
-    font-weight: normal;
-    margin-left: 30px;
-    margin-top: 30px;
+.profile-container{
+    margin: 30px;
+}
+
+.userQuestions{
+    display: flex;
+    flex-direction: column;
 }

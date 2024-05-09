@@ -163,8 +163,14 @@ export const fetchQuestionsSet = async (setAllQuestions) => {
 export const fetchQuestionTagNames = async qstn => {
     const names = await Promise.all(qstn.tags.map(async (tagId) => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/tags/${tagId}`);
-            return response.data.name;
+            try {
+                const response = await axios.get(`http://localhost:8000/api/tags/${tagId}`);
+                return response.data.name;
+            }
+            catch (err){
+                const response = await axios.get(`http://localhost:8000/api/tags/${tagId._id}`);
+                return response.data.name;
+            }
         } catch (error) {
             console.error('Error fetching tag name:', error);
             return tagId; // Fallback to showing the tag ID if the name can't be fetched

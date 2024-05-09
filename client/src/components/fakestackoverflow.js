@@ -7,7 +7,7 @@ import Welcome from "./welcome";
 export default function FakeStackOverflow() {
   const [visitedQuestion, setVisitedQuestion] = useState(0);
   const [renderedQuestions, setRenderedQuestions] = useState([]);
-  const [mode, setMode] = useState(5);
+  const [mode, setMode] = useState(0);
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
   const [isOnline, setIsOnline] = useState(true);

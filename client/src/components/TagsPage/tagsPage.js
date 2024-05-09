@@ -28,7 +28,7 @@ export default function Tags({ setRenderedQuestions, setMode }) {
                     let numTagQuestions = tagQuestions.length;
                     return (
                         <div className="tag" key={t._id}>
-                            <button class="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
+                            <button className="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
                             <h4 className='tagHeading'>{numTagQuestions} Question{numTagQuestions !== 1 ? 's' : ''}</h4>
                         </div>
                     )
