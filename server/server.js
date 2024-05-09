@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Question = require('./models/questions');
+const Questions = require('./models/questions');
 const Tags = require('./models/tags')
 const Answers = require('./models/answers')
 const Users = require('./models/users');
@@ -36,7 +36,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // Route to get all questions
 app.get('/api/questions', async (req, res) => {
     try {
-        const questions = await Question.find();
+        const questions = await Questions.find();
         res.json(questions);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -78,7 +78,7 @@ app.get('/api/answers/:aid', async (req, res) => {
 
 app.get('/api/questions/:qid', async (req, res) => {
     try {
-        const question = await Question.findById(req.params.qid);
+        const question = await Questions.findById(req.params.qid);
         res.json(question);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -92,7 +92,7 @@ app.post('/api/questions', async (req, res) => {
         const tagIds = await insertTagsAndGetIds(req.body.tags);
 
         // Create and save the new question with tag IDs
-        const newQuestion = new Question({
+        const newQuestion = new Questions({
             title: req.body.title,
             text: req.body.text,
             tags: tagIds,
@@ -111,7 +111,7 @@ app.post('/api/questions', async (req, res) => {
 // Route to increment view by 1
 app.patch('/api/questions/:qid/increment-views', async (req, res) => {
     try {
-        const question = await Question.findById(req.params.qid);
+        const question = await Questions.findById(req.params.qid);
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
@@ -123,27 +123,145 @@ app.patch('/api/questions/:qid/increment-views', async (req, res) => {
     }
 });
 
-app.post('/api/questions/:qid/answers', async (req, res) => {
+// Get number of upvotes to a question
+app.get('/api/questions/:qid/votes', async (req, res) => {
+    console.log("Upvotes checked");
     try {
-        // Find the question
-        const question = await Question.findById(req.params.qid);
+        const question = await Questions.findById(req.params.qid);
+        res.status(200).json(question.upvoters.length - question.downvoters.length);
+        console.log("Success");
+    } catch (error) {
+        console.error(error);
+        console.log("Error found");
+        res.status(500).json({ message: error.message });
+        console.log("Failed");
+    }
+})
+
+// Middleware to verify the user session
+const verifySession = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        req.signedIn = false;
+    }
+
+    jwt.verify(token, 'goats', (err, decoded) => {
+        if (err) 
+            return res.status(401).json({ message: 'Session invalid' });
+        req.signedIn = true;
+        req.userId = decoded.userId;
+        next();
+    });
+};
+
+const toggleUpvote = async (req, res) => {
+    const { qid } = req.params;
+    const { userId, signedIn } = req;
+
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
+
+    try {
+        const question = await Questions.findById(qid);
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
 
-        // Create and save the new answer
-        const newAnswer = new Answers({
-            text: req.body.text,
-            ans_by: req.body.username,
-            ans_date_time: new Date(),
-        });
-        await newAnswer.save();
+        if (question.upvoters.includes(userId)) {
+            question.upvoters.pull(userId);
+            console.log("Removed upvote")
+        } else {
+            question.upvoters.push(userId);
+            question.downvoters.pull(userId);
+            console.log("Added upvote")
+        }
 
-        // Add the answer ID to the question's answers array and save the question
-        question.answers.push(newAnswer._id);
         await question.save();
 
-        res.status(201).json(newAnswer);
+        res.status(200).json({ message: 'Upvote toggled successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+const toggleDownvote = async (req, res) => {
+    const { qid } = req.params;
+    const { userId, signedIn } = req;
+
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
+
+    try {
+        const question = await Questions.findById(qid);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if (question.downvoters.includes(userId)) {
+            question.downvoters.pull(userId);
+        } else {
+            question.downvoters.push(userId);
+            question.upvoters.pull(userId);
+        }
+
+        await question.save();
+
+        res.status(200).json({ message: 'Upvote toggled successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+app.patch('/api/questions/:qid/votes/toggle-upvote', verifySession, toggleUpvote);
+app.patch('/api/questions/:qid/votes/toggle-downvote', verifySession, toggleDownvote);
+
+app.get('/api/questions/:qid/votes/user', verifySession, async (req, res) => {
+    console.log("Attempting to find user votse");
+    const { qid } = req.params;
+    const { userId, signedIn } = req;
+    
+    try {
+        const question = await Questions.findById(qid);
+        if (!question) {
+            console.log("Question not found");
+            return res.status(404).json({ message: 'Question not found' });
+        }
+        
+        if (!signedIn)
+            res.status(200).json(0);
+        else if (question.upvoters.includes(userId))
+            res.status(200).json(1);
+        else if (question.downvoters.includes(userId))
+            res.status(200).json(-1);
+        else
+            res.status(200).json(0);
+    } catch (error) {
+        console.log("Other error");
+        res.status(400).json({ message: error.message });
+    }
+
+})
+
+app.post('/api/questions/:qid/answers', async (req, res) => {
+    const { qid } = req.params;
+    const { userId } = req;
+
+    try {
+        const question = await Questions.findById(qid);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if (question.upvoters.includes(userId)) {
+            question.downvoters.pull(userId);
+        } else {
+            question.downvoters.push(userId);
+            question.upvoters.pull(userId);
+        }
+
+        await question.save();
+
+        res.status(200).json({ message: 'Upvote toggled successfully' });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

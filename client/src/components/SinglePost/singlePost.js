@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
 import timeToString from "../../modules/timeToString";
 import { fetchAnswers } from "../../request-functions/request-functions";
+import Vote from './vote';
 
 export default function SinglePost({ qstn, setMode, user }) {
     const [answers, setAnswers] = useState([]);
@@ -14,17 +15,18 @@ export default function SinglePost({ qstn, setMode, user }) {
         <div id="singlePostPage">
             <div id="postQuestionInfo">
                 <div id="postTop1">
-                    <span className="answerCount bold">{qstn.answers.length} answers{qstn.answers.length !== 1 ? 's' : ''}</span>
+                    <span className="answerCount bold">{qstn.answers.length} answer{qstn.answers.length !== 1 ? 's' : ''}</span>
                     <span id="question-title" className="bold">{qstn.title}</span>
                     <span className="btn-container"><QstnButton setMode={setMode}/></span>
                 </div>
 
                 <div id="postTop2">
-                    <span className="viewCount bold">{qstn.views} views{qstn.views !== 1 ? 's' : ''}</span>
+                    <span className="viewCount bold">{qstn.views} view{qstn.views !== 1 ? 's' : ''}</span>
                     <div className="question-description" dangerouslySetInnerHTML={{__html: qstn.text}}></div>
                     <div id="askedInfo" className="column-right">
                         <span className="asker">{qstn.asked_by}</span>
                         <span className="posted-time"> asked {timeToString(qstn.ask_date_time)}</span>
+                        <Vote qstn={qstn} user={user}></Vote>
                     </div>
                 </div>
             </div>

@@ -8,7 +8,9 @@ const questionSchema = new mongoose.Schema({
     answers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
     asked_by: { type: String, required: true, default: "Anonymous" },
     ask_date_time: { type: Date, default: Date.now }, // Set default value to current date and time
-    views: { type: Number, default: 0 } // Set default value to 0
+    views: { type: Number, default: 0 }, // Set default value to 0
+    upvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
+    downvoters: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] }
 });
 
 questionSchema.virtual('url').get(function () {

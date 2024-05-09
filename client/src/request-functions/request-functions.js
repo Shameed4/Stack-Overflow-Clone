@@ -161,3 +161,44 @@ export const handleQuestionClick = async (visitThisQstn, qstn) => {
     }
 };
 
+export const getQstnRating = async qstn => {
+    try {
+        console.log(qstn);
+        const votes = await axios.get(`http://localhost:8000/api/questions/${qstn._id}/votes`);
+        return votes.data;
+    } catch (error) {
+        console.error('Error finding rating', error)
+        return -Infinity;
+    }
+}
+
+export const getUserQstnVote = async qstn => {
+    try {
+        const vote = await axios.get(`http://localhost:8000/api/questions/${qstn._id}/votes/user`);
+        console.log("User voted", vote);
+        return vote.data;
+    } catch (error) {
+        console.error("Failed to check user vote", error);
+        return 0;
+    }
+}
+
+export const toggleUpvote = async qstn => {
+    try {
+        await axios.patch(`http://localhost:8000/api/questions/${qstn._id}/votes/toggle-upvote`);
+        return true;
+    } catch (error) {
+        console.error('Error toggling upvote', error)
+        return false;
+    }
+}
+
+export const toggleDownvote = async qstn => {
+    try {
+        await axios.patch(`http://localhost:8000/api/questions/${qstn._id}/votes/toggle-downvote`);
+        return true;
+    } catch (error) {
+        console.error('Error toggling downvote', error)
+        return false;
+    }
+}
