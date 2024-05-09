@@ -13,14 +13,17 @@ export const fetchAnswers = async (qstn, setAnswers) => {
     }
 };
 
-export const fetchQstnComments = async (qstn, setQstnComments) => {
+// works for question and answer
+export const fetchComments = async (obj, setComments) => {
     try {
-        const commentsPromises = qstn.comments.map(commentId =>
+        console.log("Object in fetch", obj.obj)
+        const commentsPromises = obj.comments.map(commentId =>
             axios.get(`http://localhost:8000/api/comments/${commentId}`)
         );
         const commentsResponses = await Promise.all(commentsPromises);
         const fetchedComments = commentsResponses.map(response => response.data);
-        setQstnComments(fetchedComments);
+        console.log("Fetched comments", fetchedComments);
+        setComments(fetchedComments);
     } catch (error) {
         console.error('Error fetching comments:', error);
     }

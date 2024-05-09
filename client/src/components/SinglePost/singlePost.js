@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
 import { timeToString } from "../../modules/helper-funtions";
-import { fetchQuestion, fetchAnswers, fetchQstnComments } from "../../request-functions/request-functions";
+import { fetchQuestion, fetchAnswers, fetchComments } from "../../request-functions/request-functions";
 import QuestionVote from './Voting/questionVote';
 import AnswerVote from './Voting/answerVote';
+import CommentVote from './Voting/commentVote';
+import CommentCollection from './commentCollection';
 
 export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment }) {
     const [answers, setAnswers] = useState([]);
     const [qstnComments, setQstnComments] = useState([]);
-
+    console.log("Question", qstn);
     const updateQuestion = async () => {
         setQstn(await fetchQuestion(qstn));
+        fetchAnswers(qstn, setAnswers);
+        fetchComments(qstn, setQstnComments);
     }
 
     useEffect(() => {
-        fetchAnswers(qstn, setAnswers);
-        fetchQstnComments(qstn, setQstnComments);
         updateQuestion();
     }, []);
 
@@ -42,31 +44,7 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                         </div>
                     </div>
                 </div>
-
-                <div className="comments">
-                    <button onClick={() => {
-                        setObjToComment(qstn);
-                        setMode(6);
-                    }
-                    }>Comment</button>
-                    {qstnComments.map(comment => {
-                        return (
-                            <div className="comment">
-                                <QuestionVote qstn={qstn}></QuestionVote>
-                                <span className="answerer">{comment.com_by}</span>
-                                <span className="posted-time"> commented {timeToString(comment.com_date_time)}</span>
-                                <span>{comment.text}</span>
-                            </div>
-                        );
-                    })}
-
-                    <div className="comment">
-                        <QuestionVote qstn={qstn}></QuestionVote>
-                        <span className="answerer">{"goat"}</span>
-                        <span className="posted-time"> commented {timeToString(Date.now())}</span>
-                        <span>Here's my question comment</span>
-                    </div>
-                </div>
+                <CommentCollection obj={qstn} setObjToComment={setObjToComment} setMode={setMode}></CommentCollection>
             </div>
 
             <div id="answers">
@@ -80,14 +58,7 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                             </div>
                             <AnswerVote ans={ans}></AnswerVote>
                         </div>
-                        <div className="comments">
-                            <div className="comment">
-                                <AnswerVote ans={ans}></AnswerVote>
-                                <span className="answerer">{"goat"}</span>
-                                <span className="posted-time"> commented {timeToString(Date.now())}</span>
-                                <span>Here's my comment</span>
-                            </div>
-                        </div>
+                        <CommentCollection obj={ans} setObjToComment={setObjToComment} setMode={setMode}></CommentCollection>
                     </div>
                 ))}
             </div>

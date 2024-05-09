@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { validateAndConvertHyperlinks } from '../modules/helper-funtions';
 
-export default function AnswerForm({ setMode, qstn, setVisitedQuestion, user}) {
+export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
     const [answerText, setAnswerText] = useState('');
     const [errors, setErrors] = useState({});
 

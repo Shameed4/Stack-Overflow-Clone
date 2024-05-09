@@ -29,7 +29,7 @@ export default function Col2({ mode, setMode, renderedQuestions, setRenderedQues
                         case 5:
                             return <UserProfile setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user}/>;
                         case 6:
-                            return <CommentForm setMode={setMode} obj={objToComment}></CommentForm>
+                            return <CommentForm setMode={setMode} obj={objToComment} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion}></CommentForm>
                         default:
                             return null; // Handle default case if needed
                     }

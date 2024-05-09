@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { validateAndConvertHyperlinks } from '../modules/helper-funtions';
 
-export default function CommentForm({ setMode, obj}) {
+export default function CommentForm({ setMode, obj, qstn, setVisitedQuestion}) {
     let commentType = "";
     if (obj["tags"])
         commentType = "questions";
@@ -53,6 +53,8 @@ export default function CommentForm({ setMode, obj}) {
             console.error('Error posting comment:', error);
         }
 
+        const updatedQuestion = await axios.get(`http://localhost:8000/api/questions/${qstn._id}`);
+        setVisitedQuestion(updatedQuestion.data);
         setMode(2);
     };
 

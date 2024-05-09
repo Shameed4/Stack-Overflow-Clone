@@ -49,6 +49,22 @@ const verifySession = (req, res, next) => {
         next();
     });
 };
+
+const prepareQuestion = (req, res, next) => {
+    req.Type = Questions;
+    next();
+}
+
+const prepareAnswer = (req, res, next) => {
+    req.Type = Answers;
+    next();
+}
+
+const prepareComment = (req, res, next) => {
+    req.Type = Comments;
+    next();
+}
+
 // Route to get all questions
 app.get('/api/questions', async (req, res) => {
     try {
@@ -105,7 +121,7 @@ app.get('/api/questions/:qid', async (req, res) => {
 // Route to get comment by id
 app.get('/api/comments/:cid', async (req, res) => {
     try {
-        console.log(req.params.cid);
+        console.log("Comment", req.params.cid);
         const comment = await Comments.findById(req.params.cid);
         res.json(comment);
     } catch (error) {
@@ -181,20 +197,19 @@ app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
     }
 });
 
-// Route to post comment to question
-app.post('/api/questions/:qid/comments', verifySession, async (req, res) => {
-    const { userId, signedIn } = req;
+const postComment = async (req, res) => {
+    const { Type, userId, signedIn } = req;
 
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
     try {
         // Find the question
-        const question = await Questions.findById(req.params.qid);
+        const obj = await Type.findById(req.params.id);
         const user = await Users.findById(userId);
         const username = user.username;
 
-        if (!question) {
+        if (!obj) {
             return res.status(404).json({ message: 'Question not found' });
         }
 
@@ -206,15 +221,21 @@ app.post('/api/questions/:qid/comments', verifySession, async (req, res) => {
         await newComment.save();
 
         // Add the answer ID to the question's answers array and save the question
-        question.comments.push(newComment._id);
-        await question.save();
+        obj.comments.push(newComment._id);
+        await obj.save();
 
         res.status(201).json(newComment);
     } catch (error) {
         console.error(error);
         res.status(400).json({ message: error.message });
     }
-});
+}
+
+// Route to post comment to question
+app.post('/api/questions/:id/comments', verifySession, prepareQuestion, postComment);
+
+// Route to post comment to answer
+app.post('/api/answers/:id/comments', verifySession, prepareAnswer, postComment);
 
 // Route to increment view by 1
 app.patch('/api/questions/:qid/increment-views', async (req, res) => {
@@ -230,21 +251,6 @@ app.patch('/api/questions/:qid/increment-views', async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
-
-const prepareQuestion = (req, res, next) => {
-    req.Type = Questions;
-    next();
-}
-
-const prepareAnswer = (req, res, next) => {
-    req.Type = Answers;
-    next();
-}
-
-const prepareComment = (req, res, next) => {
-    req.Type = Comments;
-    next();
-}
 
 // Get number of upvotes to a question
 const getTotalVotes = async (req, res) => {
