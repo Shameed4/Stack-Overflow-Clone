@@ -22,12 +22,15 @@ export default function SinglePost({ qstn, setMode, user }) {
                 </div>
 
                 <div id="postTop2">
-                    <span className="viewCount bold">{qstn.views} view{qstn.views !== 1 ? 's' : ''}</span>
+                    <div>
+                        <span className="viewCount bold">{qstn.views} view{qstn.views !== 1 ? 's' : ''}</span>
+                        <QuestionVote qstn={qstn}/>
+                    </div>
+
                     <div className="question-description" dangerouslySetInnerHTML={{__html: qstn.text}}></div>
                     <div id="askedInfo" className="column-right">
                         <span className="asker">{qstn.asked_by}</span>
                         <span className="posted-time"> asked {timeToString(qstn.ask_date_time)}</span>
-                        <QuestionVote qstn={qstn} user={user}></QuestionVote>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import Tags from './TagsPage/tagsPage';
 import SinglePost from './SinglePost/singlePost';
 import QuestionsForm from "./questionsForm";
 import AnswerForm from "./answerForm";
+import UserProfile from './UserProfile';
 
 export default function Col2({ mode, setMode, renderedQuestions, setRenderedQuestions, visitedQuestion, setVisitedQuestion, user}) {
     return (
@@ -21,6 +22,8 @@ export default function Col2({ mode, setMode, renderedQuestions, setRenderedQues
                             return <QuestionsForm setMode={setMode} setRenderedQuestions={setRenderedQuestions} user={user}/>
                         case 4:
                             return <AnswerForm setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user}/>
+                        case 5:
+                            return <UserProfile setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user}/>;
                         default:
                             return null; // Handle default case if needed
                     }
