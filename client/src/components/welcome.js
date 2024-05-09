@@ -4,17 +4,32 @@ import axios from 'axios';
 // Set withCredentials to true for all requests
 axios.defaults.withCredentials = true;
 
-export default function Welcome({setPage, user, setUser}) {
+export default function Welcome({setPage, user, setUser, isOnline, setIsOnline}) {
     const [form, setForm] = useState('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [loginError, setLoginError] = useState('');
     const [signupError, setSignupError] = useState('');
+    const [showOfflineError, setShowOfflineError] = useState(false);  // New state for offline error
 
     useEffect(() => {
         verifySession();
+        window.addEventListener('online',  () => setIsOnline(true));
+        window.addEventListener('offline', () => setIsOnline(false));
+        return () => {
+            window.removeEventListener('online',  () => setIsOnline(true));
+            window.removeEventListener('offline', () => setIsOnline(false));
+        };
     }, []);
+
+    useEffect(() => {
+        if (!isOnline) {
+            setShowOfflineError(true); // Show offline error when not online
+        } else {
+            setShowOfflineError(false); // Hide offline error when online
+        }
+    }, [isOnline]);
 
     const verifySession = async () => {
         try {
@@ -38,6 +53,10 @@ export default function Welcome({setPage, user, setUser}) {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoginError('');
+        if (!isOnline) {
+            setShowOfflineError(true);
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:8000/api/users/login', {
                 email,
@@ -59,6 +78,10 @@ export default function Welcome({setPage, user, setUser}) {
 
     const handleSignup = async (e) => {
         e.preventDefault();
+        if (!isOnline) {
+            setShowOfflineError(true);
+            return;
+        }
         if (!validateEmail(email)) {
             setSignupError('Please enter a valid email address.');
             return;
@@ -88,6 +111,7 @@ export default function Welcome({setPage, user, setUser}) {
         <div className="welcome">
             <h1 className='WelcomeHeader'>Welcome to Fake Stack Overflow!</h1>
             <div className="form-container">
+                {showOfflineError && <p style={{ color: 'red' }}>You are offline. Please check your connection.</p>}
                 {form === 'login' ? (
                     <div>
                         <h2>Login</h2>

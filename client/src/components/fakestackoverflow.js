@@ -15,6 +15,7 @@ export default function FakeStackOverflow() {
   const [mode, setMode] = useState(0);
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     renderNewestQuestions(setRenderedQuestions);
@@ -34,19 +35,19 @@ export default function FakeStackOverflow() {
 
           <Col2 mode={mode} setMode={setMode} renderedQuestions={renderedQuestions}
                 setRenderedQuestions={setRenderedQuestions} visitedQuestion={visitedQuestion}
-                setVisitedQuestion={setVisitedQuestion} user={user}/>
+                setVisitedQuestion={setVisitedQuestion} user={user} isOnline={isOnline} setIsOnline={setIsOnline}/>
         </div>
     );
   }
 
   return (
       <div className="App">
-        <Header setRenderedQuestions={setRenderedQuestions} setMode={setMode} user={user} page={page} setUser={setUser} setPage={setPage}/>
+        <Header setRenderedQuestions={setRenderedQuestions} setMode={setMode} user={user} page={page} setUser={setUser} setPage={setPage} isOnline={isOnline} setIsOnline={setIsOnline}/>
           {
               (() => {
                   switch (page) {
                       case 0:
-                          return <Welcome renderedQuestions={renderedQuestions} setRenderedQuestions={setRenderedQuestions} setMode={setMode} setVisitedQuestion={setVisitedQuestion} setPage={setPage} user={user} setUser={setUser}/>;
+                          return <Welcome renderedQuestions={renderedQuestions} setRenderedQuestions={setRenderedQuestions} setMode={setMode} setVisitedQuestion={setVisitedQuestion} setPage={setPage} user={user} setUser={setUser} isOnline={isOnline} setIsOnline={setIsOnline}/>;
                       case 1:
                           return col2()
                       default:
