@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
 import timeToString from "../../modules/timeToString";
 import { fetchAnswers } from "../../request-functions/request-functions";
-import Vote from './vote';
+import QuestionVote from './questionVote';
 
 export default function SinglePost({ qstn, setMode, user }) {
     const [answers, setAnswers] = useState([]);
@@ -26,7 +26,7 @@ export default function SinglePost({ qstn, setMode, user }) {
                     <div id="askedInfo" className="column-right">
                         <span className="asker">{qstn.asked_by}</span>
                         <span className="posted-time"> asked {timeToString(qstn.ask_date_time)}</span>
-                        <Vote qstn={qstn} user={user}></Vote>
+                        <QuestionVote qstn={qstn} user={user}></QuestionVote>
                     </div>
                 </div>
             </div>

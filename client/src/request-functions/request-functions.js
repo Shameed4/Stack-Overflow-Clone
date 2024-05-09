@@ -161,20 +161,19 @@ export const handleQuestionClick = async (visitThisQstn, qstn) => {
     }
 };
 
-export const getQstnRating = async qstn => {
+export const getRating = async (type, obj) => {
     try {
-        console.log(qstn);
-        const votes = await axios.get(`http://localhost:8000/api/questions/${qstn._id}/votes`);
+        const votes = await axios.get(`http://localhost:8000/api/${type}/${obj._id}/votes`);
         return votes.data;
     } catch (error) {
         console.error('Error finding rating', error)
-        return -Infinity;
+        return 0;
     }
 }
 
-export const getUserQstnVote = async qstn => {
+export const getUserVote = async (type, obj) => {
     try {
-        const vote = await axios.get(`http://localhost:8000/api/questions/${qstn._id}/votes/user`);
+        const vote = await axios.get(`http://localhost:8000/api/${type}/${obj._id}/votes/user`);
         console.log("User voted", vote);
         return vote.data;
     } catch (error) {
@@ -183,9 +182,9 @@ export const getUserQstnVote = async qstn => {
     }
 }
 
-export const toggleUpvote = async qstn => {
+export const toggleUserUpvote = async (type, obj) => {
     try {
-        await axios.patch(`http://localhost:8000/api/questions/${qstn._id}/votes/toggle-upvote`);
+        await axios.patch(`http://localhost:8000/api/${type}/${obj._id}/votes/toggle-upvote`);
         return true;
     } catch (error) {
         console.error('Error toggling upvote', error)
@@ -193,9 +192,9 @@ export const toggleUpvote = async qstn => {
     }
 }
 
-export const toggleDownvote = async qstn => {
+export const toggleUserDownvote = async (type, obj) => {
     try {
-        await axios.patch(`http://localhost:8000/api/questions/${qstn._id}/votes/toggle-downvote`);
+        await axios.patch(`http://localhost:8000/api/${type}/${obj._id}/votes/toggle-downvote`);
         return true;
     } catch (error) {
         console.error('Error toggling downvote', error)
