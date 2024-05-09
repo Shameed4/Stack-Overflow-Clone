@@ -6,12 +6,23 @@ const Question = require('./models/questions');
 const Tags = require('./models/tags')
 const Answers = require('./models/answers')
 const Users = require('./models/users');
+const jwt = require('jsonwebtoken');
 
 const app = express();
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:3000', // allowing access from your client
+    credentials: true, // this allows the server to accept cookies from the client
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+
 
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/fake_so', {
@@ -178,26 +189,55 @@ app.post('/api/users', async (req, res) => {
 
 app.post('/api/users/login', async (req, res) => {
     try {
-        // Find the user by email
         const user = await Users.findOne({ email: req.body.email.toLowerCase() });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Compare the provided password with the hashed password in the database
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // If the password matches, you can proceed with setting user session or issuing a token, etc.
-        // For now, we'll just return a success response
-        res.status(200).json({ message: 'Login successful', userId: user._id, username: user.username,  email: user.email.toLowerCase(), name: user.name});
+        // Generate a token
+        const token = jwt.sign(
+            { userId: user._id, username: user.username },
+            'goats', // Ensure your secret key is stored safely and is robust enough.
+            { expiresIn: '1h' } // Token expires in 1 hour
+        );
+
+        // Set the cookie with security options appropriate for both production and development
+        res.cookie('token', token, {
+            httpOnly: true, // Makes the cookie inaccessible to client-side scripts, important for protecting against XSS
+        });
+
+        res.status(200).json({ message: 'Login successful', username: user.username });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
+
+app.get('/api/users/verify-session', (req, res) => {
+    console.log('Cookies:', req.cookies); // Will log all cookies
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: 'No session found' });
+    }
+
+    jwt.verify(token, 'goats', async (err, decoded) => {
+        if (err) return res.status(401).json({ message: 'Session invalid' });
+
+        try {
+            const user = await Users.findById(decoded.userId);
+            if (! user) return res.status(404).json({ message: 'User not found' });
+
+            res.json({ userId: user._id, username: user.username, email: user.email, name: user.name });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    });
+});
 
 
 // Start the server

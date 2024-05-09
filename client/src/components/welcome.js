@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
+// Set withCredentials to true for all requests
+axios.defaults.withCredentials = true;
 
 export default function Welcome({setPage, user, setUser}) {
     const [form, setForm] = useState('login');
@@ -8,6 +11,25 @@ export default function Welcome({setPage, user, setUser}) {
     const [name, setName] = useState('');
     const [loginError, setLoginError] = useState('');
     const [signupError, setSignupError] = useState('');
+
+    useEffect(() => {
+        verifySession();
+    }, []);
+
+    const verifySession = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/users/verify-session');
+            if (response.status === 200) {
+                console.log('Session is active');
+                setUser(response.data); // Update the user state with the verified user information
+                setPage(1); // Navigate to the main page
+            }
+        } catch (error) {
+            console.error('Session is not active:', error.response ? error.response.data.message : error.message);
+            // Handle logged out state
+        }
+    };
+
 
     const validateEmail = (email) => {
         return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
