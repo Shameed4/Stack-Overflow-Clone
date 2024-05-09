@@ -536,3 +536,25 @@ html, body {
 .onlineError{
     position: absolute;
 }
+
+
+#header {
+    position: relative; /* This makes the parent the reference for positioning the absolute child */
+
+}
+
+.independent-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto; /* Centers the element */
+    background-color: #ef4444; /* Red background, corrected from the previous green description */
+    padding: 10px;
+    color: white;
+    border-radius: 7px;
+    width: 25%; /* Define a width */
+    height: 50%; /* Define a height */
+    transition: all 0.5s;
+}

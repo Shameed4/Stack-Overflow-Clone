@@ -357,6 +357,11 @@ app.get('/api/users/verify-session', (req, res) => {
     });
 });
 
+app.get('/logout', (req, res) => {
+    res.cookie('token', '', { expires: new Date(0) }); // Clear the cookie by setting an expired date
+    res.send('Logged out');
+    console.log("yo yo")
+});
 
 // Start the server
 const PORT = process.env.PORT || 8000;
