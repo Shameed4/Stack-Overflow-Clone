@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import timeToString from "../../modules/timeToString";
+import { timeToString } from "../../modules/helper-funtions";
 import { renderQuestionTagNames, handleQuestionClick } from "../../request-functions/request-functions";
 
 export default function Question({ qstn, visitThisQstn }) {

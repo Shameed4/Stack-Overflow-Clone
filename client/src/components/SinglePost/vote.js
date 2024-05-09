@@ -10,7 +10,6 @@ export default function Vote({ type, obj }) {
             const rating = await getRating(type, obj);
             setTotalRated(rating);
             const userVote = await getUserVote(type, obj);
-            console.log("User vote:", userVote);
             setUserRated(userVote);
         } catch (error) {
             console.error("Error fetching rating:", error);

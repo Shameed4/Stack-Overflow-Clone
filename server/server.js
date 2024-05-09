@@ -33,6 +33,21 @@ mongoose.connect('mongodb://127.0.0.1:27017/fake_so', {
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+// Middleware to verify the user session - Use before anything that requires being signed in
+const verifySession = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        req.signedIn = false;
+    }
+
+    jwt.verify(token, 'goats', (err, decoded) => {
+        if (err)
+            return res.status(401).json({ message: 'Session invalid' });
+        req.signedIn = true;
+        req.userId = decoded.userId;
+        next();
+    });
+};
 // Route to get all questions
 app.get('/api/questions', async (req, res) => {
     try {
@@ -87,17 +102,24 @@ app.get('/api/questions/:qid', async (req, res) => {
 });
 
 // Route to post a question
-app.post('/api/questions', async (req, res) => {
+app.post('/api/questions', verifySession, async (req, res) => {
+    const { userId, signedIn } = req;
+    
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
+
     try {
         // Insert tags and get their IDs
         const tagIds = await insertTagsAndGetIds(req.body.tags);
+        const user = await Users.findById(userId);
+        const username = user.username;
 
         // Create and save the new question with tag IDs
         const newQuestion = new Questions({
             title: req.body.title,
             text: req.body.text,
             tags: tagIds,
-            asked_by: req.body.username,
+            asked_by: username,
             ask_date_time: new Date(),
             answers: [],
         });
@@ -124,22 +146,6 @@ app.patch('/api/questions/:qid/increment-views', async (req, res) => {
     }
 });
 
-// Middleware to verify the user session
-const verifySession = (req, res, next) => {
-    const token = req.cookies.token;
-    if (!token) {
-        req.signedIn = false;
-    }
-
-    jwt.verify(token, 'goats', (err, decoded) => {
-        if (err)
-            return res.status(401).json({ message: 'Session invalid' });
-        req.signedIn = true;
-        req.userId = decoded.userId;
-        next();
-    });
-};
-
 const prepareQuestion = (req, res, next) => {
     req.Type = Questions;
     next();
@@ -159,8 +165,6 @@ const prepareComment = (req, res, next) => {
 const getTotalVotes = async (req, res) => {
     const { id } = req.params;
     const { Type } = req;
-
-    console.log("ID TYPE", id, Type);
 
     try {
         const obj = await Type.findById(id);
@@ -266,27 +270,39 @@ app.patch('/api/comments/:id/votes/toggle-upvote', verifySession, prepareComment
 app.patch('/api/comments/:id/votes/toggle-downvote', verifySession, prepareComment, toggleDownvote);
 
 
-app.post('/api/questions/:id/answers', async (req, res) => {
-    const { id } = req.params;
-    const { userId } = req;
+app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
+    const { userId, signedIn } = req;
+    
+    if (!signedIn)
+        return res.status(401).json("Not signed in");
 
     try {
-        const question = await Questions.findById(id);
+        // Find the question
+        const question = await Questions.findById(req.params.qid);
+        const user = await Users.findById(userId);
+        const username = user.username;
+        console.log("Username", username);
+
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
 
-        if (question.upvoters.includes(userId)) {
-            question.downvoters.pull(userId);
-        } else {
-            question.downvoters.push(userId);
-            question.upvoters.pull(userId);
-        }
+        // Create and save the new answer
+        const newAnswer = new Answers({
+            text: req.body.text,
+            ans_by: username,
+            ans_date_time: new Date(),
+        });
+        await newAnswer.save();
 
+        // Add the answer ID to the question's answers array and save the question
+        question.answers.push(newAnswer._id);
         await question.save();
 
-        res.status(200).json({ message: 'Upvote toggled successfully' });
+        res.status(201).json(newAnswer);
     } catch (error) {
+        console.log("bad answer, failed to post");
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 });
@@ -392,3 +408,10 @@ const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+// const test = async () => {
+//     console.log(await Answers.find())
+//     console.log(await Questions.find())
+// }
+
+// test();

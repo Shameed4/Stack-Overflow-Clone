@@ -1,52 +1,13 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import {renderNewestQuestions} from "../request-functions/request-functions"
+import { validateAndConvertHyperlinks } from '../modules/helper-funtions';
 
-export default function QuestionsForm({setMode, setRenderedQuestions, user}) {
+export default function QuestionsForm({setMode, setRenderedQuestions}) {
     const [title, setTitle] = useState('');
     const [questionText, setQuestionText] = useState('');
     const [tags, setTags] = useState('');
-    const username = user.username;
     const [errors, setErrors] = useState({});
-
-    const validateAndConvertHyperlinks = (text) => {
-        let isValid = true;
-        let convertedText = text;
-        let errors = {};
-
-        let startIndex = 0;
-        while (startIndex < convertedText.length) {
-            const openBracketIndex = convertedText.indexOf('[', startIndex);
-            const closeBracketIndex = convertedText.indexOf(']', openBracketIndex);
-            const openParenIndex = convertedText.indexOf('(', closeBracketIndex);
-            const closeParenIndex = convertedText.indexOf(')', openParenIndex);
-
-            if (openBracketIndex !== -1 && closeBracketIndex !== -1 && openParenIndex !== -1 && closeParenIndex !== -1 &&
-                closeBracketIndex === openParenIndex - 1) {
-                const linkText = convertedText.substring(openBracketIndex + 1, closeBracketIndex);
-                const linkUrl = convertedText.substring(openParenIndex + 1, closeParenIndex);
-
-                if (linkText === '' || linkUrl === '' || (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://'))) {
-                    isValid = false;
-                    errors["questionText"] = "Hyperlink format is empty or invalid";
-                    break;
-                }
-
-                const anchorTag = `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
-                convertedText = convertedText.substring(0, openBracketIndex) + anchorTag + convertedText.substring(closeParenIndex + 1);
-                startIndex = openBracketIndex + anchorTag.length;
-            } else {
-                // No more hyperlinks to process
-                break;
-            }
-        }
-
-        if (!isValid) {
-            setErrors(errors);
-        }
-
-        return { isValid, convertedText };
-    };
 
     const validateForm = () => {
         let formIsValid = true;
@@ -79,12 +40,7 @@ export default function QuestionsForm({setMode, setRenderedQuestions, user}) {
             errors["tags"] = "Please enter between 1 and 5 tags.";
         }
 
-        if (!username) {
-            formIsValid = false;
-            errors["username"] = "Please enter a username.";
-        }
-
-        const { isValid } = validateAndConvertHyperlinks(questionText);
+        const { isValid } = validateAndConvertHyperlinks(questionText, setErrors, "questionsText");
         if (!isValid) {
             formIsValid = false;
             errors["questionText"] = `Hyperlink format is empty or invalid`;
@@ -104,8 +60,7 @@ export default function QuestionsForm({setMode, setRenderedQuestions, user}) {
         const questionData = {
             title,
             text: convertedText,
-            tags: tags.toLowerCase().split(" ").filter(tag => tag.length > 0),
-            username,
+            tags: tags.toLowerCase().split(" ").filter(tag => tag.length > 0)
         };
 
         try {
@@ -149,11 +104,6 @@ export default function QuestionsForm({setMode, setRenderedQuestions, user}) {
                     <input type="text" value={tags} onChange={(e) => setTags(e.target.value)}/><br></br>
                     {errors.tags && <span className="errorIndicate" style={{color: 'red'}}>{errors.tags}</span>}
                 </div>
-                {/*<div className="username" id="questionUsernames">*/}
-                {/*    <h2>Username*</h2>*/}
-                {/*    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} /><br></br>*/}
-                {/*    {errors.username && <span className="errorIndicate" style={{color: 'red'}}>{errors.username}</span>}*/}
-                {/*</div>*/}
                 <div>
                     <button id="postQstnBtn" onClick={postQuestion}>Post Question</button><br></br>
                     <span className="red">* indicates mandatory fields</span>

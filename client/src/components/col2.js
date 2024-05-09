@@ -2,8 +2,8 @@ import React from 'react';
 import AllPosts from './AllPosts/allPosts';
 import Tags from './TagsPage/tagsPage';
 import SinglePost from './SinglePost/singlePost';
-import QuestionsForm from "./questionsForm";
-import AnswerForm from "./answerForm";
+import QuestionsForm from "../Forms/questionsForm";
+import AnswerForm from "../Forms/answerForm";
 import UserProfile from './UserProfile';
 
 export default function Col2({ mode, setMode, renderedQuestions, setRenderedQuestions, visitedQuestion, setVisitedQuestion, user}) {
@@ -17,7 +17,7 @@ export default function Col2({ mode, setMode, renderedQuestions, setRenderedQues
                         case 1:
                             return <Tags setRenderedQuestions={setRenderedQuestions} setMode={setMode}/>;
                         case 2:
-                            return <SinglePost qstn={visitedQuestion} setMode={setMode} user={user}/>
+                            return <SinglePost qstn={visitedQuestion} setQstn={setVisitedQuestion} setMode={setMode} user={user}/>
                         case 3:
                             return <QuestionsForm setMode={setMode} setRenderedQuestions={setRenderedQuestions} user={user}/>
                         case 4:

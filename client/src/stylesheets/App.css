@@ -179,7 +179,7 @@ h6 {
     cursor: pointer;
 }
 
-#postTop1, #postTop2, .answer {
+#postTop1, #postTop2, .answer-top {
     display: flex;
     padding: 20px;
 }

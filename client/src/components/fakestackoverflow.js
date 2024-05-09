@@ -2,11 +2,6 @@ import Col2 from './col2.js';
 import Header from "./header"
 import React, { useState, useEffect } from 'react';
 import { renderNewestQuestions } from '../request-functions/request-functions.js';
-import AllPosts from "./AllPosts/allPosts";
-import Tags from "./TagsPage/tagsPage";
-import SinglePost from "./SinglePost/singlePost";
-import QuestionsForm from "./questionsForm";
-import AnswerForm from "./answerForm";
 import Welcome from "./welcome";
 
 export default function FakeStackOverflow() {

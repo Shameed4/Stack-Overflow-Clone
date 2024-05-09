@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
-import timeToString from "../../modules/timeToString";
-import { fetchAnswers } from "../../request-functions/request-functions";
+import { timeToString } from "../../modules/helper-funtions";
+import { fetchQuestion, fetchAnswers } from "../../request-functions/request-functions";
 import QuestionVote from './questionVote';
 import AnswerVote from './answerVote';
 
-export default function SinglePost({ qstn, setMode, user }) {
+export default function SinglePost({ qstn, setQstn, setMode, user }) {
     const [answers, setAnswers] = useState([]);
+
+    const updateQuestion = async () => {
+        setQstn(await fetchQuestion(qstn));
+    }
 
     useEffect(() => {
         fetchAnswers(qstn, setAnswers);
-    }, [qstn]);
+        updateQuestion();
+    }, []);
 
     return (
         <div id="singlePostPage">
@@ -37,13 +42,15 @@ export default function SinglePost({ qstn, setMode, user }) {
 
             <div id="answers">
                 {answers.map(ans => (
-                    <div className="answer" key={ans._id}>
-                        <div className="answer-description" dangerouslySetInnerHTML={{__html: ans.text}}></div>
-                        <div className="column-right">
-                            <span className="answerer">{ans.ans_by}</span>
-                            <span className="posted-time"> answered {timeToString(ans.ans_date_time)}</span>
+                    <div className="answer">
+                        <div className="answer-top" key={ans._id}>
+                            <div className="answer-description" dangerouslySetInnerHTML={{__html: ans.text}}></div>
+                            <div className="column-right">
+                                <span className="answerer">{ans.ans_by}</span>
+                                <span className="posted-time"> answered {timeToString(ans.ans_date_time)}</span>
+                            </div>
+                            <AnswerVote ans={ans}></AnswerVote>
                         </div>
-                        <AnswerVote ans={ans}></AnswerVote>
                     </div>
                 ))}
             </div>
@@ -58,5 +65,4 @@ export default function SinglePost({ qstn, setMode, user }) {
 
         </div>
     );
-
 }

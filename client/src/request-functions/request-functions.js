@@ -13,15 +13,6 @@ export const fetchAnswers = async (qstn, setAnswers) => {
     }
 };
 
-export const fetchQuestions = async () => {
-    try {
-        const response = await axios.get('http://localhost:8000/api/questions/');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching questions:', error);
-    }
-}
-
 export const renderNewestQuestions = async setRenderedQuestions => {
     try {
         const response = await axios.get('http://localhost:8000/api/questions');
@@ -123,6 +114,25 @@ export const fetchTags = async (setTags) => {
     }
 };
 
+export const fetchQuestion = async (qstn) => {
+    try {
+        const response = await axios.get(`http://localhost:8000/api/questions/${qstn._id}`);
+        console.log("Fetched returning", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching questions:', error);
+    }
+}
+
+export const fetchQuestions = async () => {
+    try {
+        const response = await axios.get('http://localhost:8000/api/questions/');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching questions:', error);
+    }
+}
+
 // Fetch all questions
 export const fetchQuestionsSet = async (setAllQuestions) => {
     try {
@@ -174,7 +184,6 @@ export const getRating = async (type, obj) => {
 export const getUserVote = async (type, obj) => {
     try {
         const vote = await axios.get(`http://localhost:8000/api/${type}/${obj._id}/votes/user`);
-        console.log("User voted", vote);
         return vote.data;
     } catch (error) {
         console.error("Failed to check user vote", error);
