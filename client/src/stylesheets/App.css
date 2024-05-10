@@ -304,6 +304,7 @@ h6 {
 
 .sortButtons button{
     border: none;
+    color: black;
     background: none;
     margin: 5px;
 }

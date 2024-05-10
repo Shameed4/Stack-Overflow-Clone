@@ -32,7 +32,7 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                         <span className="answerCount bold">{qstn.answers.length} answer{qstn.answers.length !== 1 ? 's' : ''}</span>
                         <span id="question-title" className="bold">{qstn.title}</span>
                         <span className="btn-container"><QstnButton setMode={setMode}/></span>
-                        {user.username === qstn.asked_by ?
+                        {user.admin && user.username === qstn.asked_by ?
                             <button onClick={()=>{
                                 setMode(3);
                                 setEditQuestion(qstn);

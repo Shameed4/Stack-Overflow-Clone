@@ -478,7 +478,7 @@ app.get('/api/users/verify-session', (req, res) => {
             const user = await Users.findById(decoded.userId);
             if (! user) return res.status(404).json({ message: 'User not found' });
 
-            res.json({ userId: user._id, username: user.username, email: user.email, name: user.name, since: user.since });
+            res.json({ userId: user._id, username: user.username, email: user.email, name: user.name, since: user.since, admin: user.admin });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
