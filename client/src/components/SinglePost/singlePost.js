@@ -68,14 +68,14 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                             </div>
                             <AnswerVote ans={ans}></AnswerVote>
                         </div>
-                        <CommentCollection obj={ans} setObjToComment={setObjToComment}
-                                           setMode={setMode}></CommentCollection>
                         {
-                            user.username === ans.ans_by ? <button onClick={()=>{
+                            user.admin || user.username === ans.ans_by ? <button onClick={()=>{
                                 setMode(4)
                                 setEditAnswer(ans)
                             }}>Edit</button> : null
                         }
+                        <CommentCollection obj={ans} setObjToComment={setObjToComment}
+                                           setMode={setMode}></CommentCollection>
                     </div>
                 ))}
             </div>

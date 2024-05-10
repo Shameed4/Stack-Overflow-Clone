@@ -4,15 +4,15 @@ import { timeToString } from "../modules/helper-funtions";  // Corrected typo in
 import AllPosts from "./AllPosts/allPosts";
 import Tags from "../components/TagsPage/tagsPage";
 
-export default function UserProfile({ setMode, visitedQuestion, setVisitedQuestion, user, renderedQuestions, setRenderedQuestions }) {
+export default function UserProfile({ setMode, visitedQuestion, setVisitedQuestion, userToView, signedInuser, renderedQuestions, setRenderedQuestions }) {
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [tags, setTags] = useState([]);
-
+    console.log("User to view in user page", userToView);
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/users/${user.username}/details`);
+                const response = await axios.get(`http://localhost:8000/api/users/${userToView.username}/details`);
                 setQuestions(response.data.questions);
                 setAnswers(response.data.answers);
                 setTags(response.data.tags);// Use the directly fetched questions
@@ -23,27 +23,26 @@ export default function UserProfile({ setMode, visitedQuestion, setVisitedQuesti
             }
         };
 
-        if (user && user.username) {
+        if (userToView && userToView.username) {
             fetchUserDetails();
         }
-    }, [user]); // Include setRenderedQuestions in the dependency array if it's not stable
+    }, [userToView]); // Include setRenderedQuestions in the dependency array if it's not stable
 
     return (
         <div className='profile-container'>
-            <h1 className='ProfileName'>{user.name}</h1>
-            <span className='since'>Since: {timeToString(user.since)}</span>
+            <h1 className='ProfileName'>{userToView.name}</h1>
+            <span className='since'>Since: {timeToString(userToView.since)}</span>
             <div className='UserQuestions'>
                 <div>
                     <h2 className='userQuestions'>Questions asked by the user:</h2>
                     <AllPosts renderedQuestions={questions} setRenderedQuestions={setRenderedQuestions}
-                              setVisitedQuestion={setVisitedQuestion} setMode={setMode} user={user}/>
+                              setVisitedQuestion={setVisitedQuestion} setMode={setMode} user={userToView}/>
                     <h2>Questions answered by the user:</h2>
                     <AllPosts renderedQuestions={answers} setRenderedQuestions={setRenderedQuestions}
-                              setVisitedQuestion={setVisitedQuestion} setMode={setMode} user={user}/>
+                              setVisitedQuestion={setVisitedQuestion} setMode={setMode} user={userToView}/>
                     <h2>All the tags created by the user:</h2>
                     <Tags setRenderedQuestions={setRenderedQuestions} setMode={setMode} tagsUser={tags}/>
                 </div>
-
             </div>
         </div>
     );

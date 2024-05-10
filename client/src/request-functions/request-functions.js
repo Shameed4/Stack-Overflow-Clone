@@ -120,6 +120,19 @@ export const renderSearchedQuestions = async (setRenderedQuestions, keyword) => 
     setRenderedQuestions(Array.from(searchResults));
 };
 
+export const renderUsers = async (setUsers, setError) => {
+    try {
+        const usersResponse = await axios.get('http://localhost:8000/api/users');
+        setUsers(usersResponse.data);
+        console.log(usersResponse.data);
+        setError(false);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        setUsers([]);
+        setError(true);
+    }
+}
+
 export const fetchTags = async (setTags) => {
     try {
         const tagsResponse = await axios.get('http://localhost:8000/api/tags');

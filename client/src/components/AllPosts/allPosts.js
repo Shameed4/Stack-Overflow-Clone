@@ -7,6 +7,7 @@ import Pagination from '../pagination';
 export default function AllPosts({ renderedQuestions, setRenderedQuestions, setVisitedQuestion, setMode, user}) {
     const [currentPage, setCurrentPage] = useState(0);
     const [currentPageQuestions, setCurrentPageQuestions] = useState([]);
+    console.log(user);
 
     return (
         <div className="AllPosts">

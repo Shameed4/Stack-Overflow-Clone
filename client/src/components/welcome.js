@@ -64,8 +64,8 @@ export default function Welcome({setPage, user, setUser, isOnline, setIsOnline})
             });
             if (response.status === 200) {
                 console.log('Login successful');
-                console.log(response.data);
-                setUser(response.data); // Update the user state with the received user information
+                console.log(response.data.user);
+                setUser(response.data.user); // Update the user state with the received user information
                 setPage(1);
                 setEmail('');  // Reset email
                 setPassword('');  // Reset password

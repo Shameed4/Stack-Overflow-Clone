@@ -4,7 +4,7 @@ import logo from '../images/Fake.svg';
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-export default function Header({ model, setRenderedQuestions, setMode, user, page, setUser, setPage, isOnline, setIsOnline }) {
+export default function Header({ model, setRenderedQuestions, setMode, user, setUserToView, page, setUser, setPage, isOnline, setIsOnline }) {
     const [searchText, setSearchText] = useState('');
 
     const handleLogout = () => {
@@ -63,7 +63,7 @@ export default function Header({ model, setRenderedQuestions, setMode, user, pag
                 {
                     user ? (
                         <div className='nameAndLogOut'>
-                            <p onClick={()=>{setMode(5)}} className='profile'>{user.name}</p>
+                            <p onClick={()=>{setUserToView(user); setMode(5)}} className='profile'>{user.name}</p>
                             <a className='logOut' onClick={handleLogout}>Log out</a>
                         </div>
                     ) : null

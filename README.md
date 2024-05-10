@@ -2,7 +2,16 @@
 Add design docs in *images/*
 
 ## Instructions to setup and run project
+To create an admin account, do 
 
-## Team Member 1 Contribution
+## Notes
 
-## Team Member 2 Contribution
+
+
+## Ritesh's Contribution
+
+## Sean's Contribution
+- Comments
+- Upvotes
+- Pagination for answers
+- Refactoring

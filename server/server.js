@@ -407,6 +407,7 @@ const insertTagsAndGetIds = async (tagNames) => {
     return tagIds;
 };
 
+// creates a user
 app.post('/api/users', async (req, res) => {
     try {
         const existingUser = await Users.findOne({ email: req.body.email.toLowerCase() });
@@ -421,7 +422,8 @@ app.post('/api/users', async (req, res) => {
             name: req.body.name,
             email: req.body.email.toLowerCase(),
             password: hashedPassword, // Store the hashed password
-            username: req.body.email.toLowerCase().split('@')[0]
+            username: req.body.email.toLowerCase().split('@')[0],
+            admin: req.body.admin ? req.body.admin : false
         });
 
         await newUser.save();
@@ -455,7 +457,7 @@ app.post('/api/users/login', async (req, res) => {
             httpOnly: true, // Makes the cookie inaccessible to client-side scripts, important for protecting against XSS
         });
 
-        res.status(200).json({ message: 'Login successful', username: user.username, name: user.name, since: user.since });
+        res.status(200).json({ message: 'Login successful', user });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -488,6 +490,16 @@ app.get('/logout', (req, res) => {
     res.send('Logged out');
     console.log("yo yo")
 });
+
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await Users.find();
+        res.status(200).json(users);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Failed to load users" })
+    }
+})
 
 app.get('/api/users/:username/details', async (req, res) => {
     const { username } = req.params;
@@ -545,9 +557,11 @@ const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// const test = async () => {
-//     console.log(await Answers.find())
-//     console.log(await Questions.find())
-// }
+const test = async () => {
+    // console.log(await Answers.find())
+    // console.log(await Questions.find())
+    // await Users.deleteOne({name: "admin"});
+    console.log(await Users.find());
+}
 
-// test();
+test();

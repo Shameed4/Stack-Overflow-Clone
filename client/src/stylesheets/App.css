@@ -49,7 +49,7 @@ body {
     margin-top: 30px;
 }
 
-#col1>div:nth-child(2) {
+#col1>div:not(:first-child) {
     margin-top: 10px;
 }
 
