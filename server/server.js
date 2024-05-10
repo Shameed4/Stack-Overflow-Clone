@@ -132,7 +132,7 @@ app.get('/api/comments/:cid', async (req, res) => {
 // Route to post a question
 app.post('/api/questions', verifySession, async (req, res) => {
     const { userId, signedIn } = req;
-    
+
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
@@ -162,7 +162,7 @@ app.post('/api/questions', verifySession, async (req, res) => {
 // Route to post answer
 app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
     const { userId, signedIn } = req;
-    
+
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
@@ -422,7 +422,7 @@ app.post('/api/users/login', async (req, res) => {
             httpOnly: true, // Makes the cookie inaccessible to client-side scripts, important for protecting against XSS
         });
 
-        res.status(200).json({ message: 'Login successful', username: user.username });
+        res.status(200).json({ message: 'Login successful', username: user.username, name: user.name, since: user.since });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -443,7 +443,7 @@ app.get('/api/users/verify-session', (req, res) => {
             const user = await Users.findById(decoded.userId);
             if (! user) return res.status(404).json({ message: 'User not found' });
 
-            res.json({ userId: user._id, username: user.username, email: user.email, name: user.name });
+            res.json({ userId: user._id, username: user.username, email: user.email, name: user.name, since: user.since });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -455,6 +455,56 @@ app.get('/logout', (req, res) => {
     res.send('Logged out');
     console.log("yo yo")
 });
+
+app.get('/api/users/:username/details', async (req, res) => {
+    const { username } = req.params;
+    try {
+        // Find the user by username
+        const user = await Users.findOne({ username: username });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Fetch all questions asked by this user
+        const questions = await Questions.find({ asked_by: username })
+
+        // Fetch all answers given by this user to get their IDs
+        const answersByUser = await Answers.find({ ans_by: username }, '_id').exec();
+
+        // Extract just the IDs from the answers
+        const answerIds = answersByUser.map(answer => answer._id);
+
+        // Fetch all questions that contain any of the answer IDs authored by this user
+        const questionsWithUserAnswers = await Questions.find({
+            answers: { $in: answerIds }
+        })
+
+
+        let tags = []
+
+        let tagObjects = await Tags.find();
+
+        questions.forEach((question) => {
+            tagObjects.forEach((tag) => {
+                if (question.tags.includes(tag.id)) {
+                    tags.push({_id: tag.id, name: tag.name});
+                }
+            });
+        });
+
+
+        res.json({
+            questions: questions,
+            answers: questionsWithUserAnswers,
+            tags: tags,
+            tagsNames: tags
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 // Start the server
 const PORT = process.env.PORT || 8000;

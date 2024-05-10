@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
 import {fetchTags, fetchQuestionsSet, renderTaggedQuestions} from "../../request-functions/request-functions";
 
-export default function Tags({ setRenderedQuestions, setMode }) {
+export default function Tags({ setRenderedQuestions, setMode, tagsUser }) {
     const [tags, setTags] = useState([]);
     const [allQuestions, setAllQuestions] = useState([]);
-
     useEffect(() => {
-        // Fetch all tags
-        fetchTags(setTags);
-        fetchQuestionsSet(setAllQuestions);
-    }, []);
+        if(tagsUser){
+            setTags(tagsUser);
+            console.log(tagsUser)
+            fetchQuestionsSet(setAllQuestions);
+        }
+        else{
+            // Fetch all tags
+            fetchTags(setTags);
+            fetchQuestionsSet(setAllQuestions);
+        }
+    }, [tagsUser]);
 
     return (
         <div className="AllTags">
@@ -28,7 +34,7 @@ export default function Tags({ setRenderedQuestions, setMode }) {
                     let numTagQuestions = tagQuestions.length;
                     return (
                         <div className="tag" key={t._id}>
-                            <button class="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
+                            <button className="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
                             <h4 className='tagHeading'>{numTagQuestions} Question{numTagQuestions !== 1 ? 's' : ''}</h4>
                         </div>
                     )

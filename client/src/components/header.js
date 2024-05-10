@@ -18,6 +18,7 @@ export default function Header({ model, setRenderedQuestions, setMode, user, pag
     };
 
 
+
     const handleEnterKeyPress = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -44,9 +45,11 @@ export default function Header({ model, setRenderedQuestions, setMode, user, pag
             <h1><img src={logo} className='logo' alt="Logo" onClick={() => {
                 setMode(0)
             }}></img></h1>
+
             <div className='SearchAndName'>
                 {
-                    page ? (
+
+                    page? (
                         <input
                             type="text"
                             placeholder="Search..."
@@ -60,7 +63,7 @@ export default function Header({ model, setRenderedQuestions, setMode, user, pag
                 {
                     user ? (
                         <div className='nameAndLogOut'>
-                            <p>{user.name}</p>
+                            <p onClick={()=>{setMode(5)}} className='profile'>{user.name}</p>
                             <a className='logOut' onClick={handleLogout}>Log out</a>
                         </div>
                     ) : null
