@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { validateAndConvertHyperlinks } from '../modules/helper-funtions';
 
-export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
-    const [answerText, setAnswerText] = useState('');
+export default function AnswerForm({ setMode, qstn, setVisitedQuestion, editAnswer}) {
+    const [answerText, setAnswerText] = useState(editAnswer ? editAnswer.text : '');
     const [errors, setErrors] = useState({});
 
     const validateForm = () => {
@@ -30,10 +30,11 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion }) {
             return;
         }
 
-        const { convertedText } = validateAndConvertHyperlinks(answerText); 
+        const { convertedText } = validateAndConvertHyperlinks(answerText);
 
         const answerData = {
-            text: convertedText
+            text: convertedText,
+            ans_id: answerText.ans_id
         };
 
         try {

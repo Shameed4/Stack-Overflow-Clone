@@ -187,33 +187,48 @@ app.post('/api/questions/:qid/answers', verifySession, async (req, res) => {
     try {
         // Find the question
         const question = await Questions.findById(req.params.qid);
-        const user = await Users.findById(userId);
-        const username = user.username;
-        console.log("Username", username);
-
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
 
-        // Create and save the new answer
-        const newAnswer = new Answers({
-            text: req.body.text,
-            ans_by: username,
-            ans_date_time: new Date(),
-        });
-        await newAnswer.save();
+        const user = await Users.findById(userId);
+        const username = user.username;
+        console.log("Username", username);
 
-        // Add the answer ID to the question's answers array and save the question
-        question.answers.push(newAnswer._id);
-        await question.save();
+        // Check if ans_id is provided to determine if updating or creating a new answer
+        if (req.body.ans_id) {
+            // Update existing answer
+            const existingAnswer = await Answers.findById(req.body.ans_id);
+            if (!existingAnswer) {
+                return res.status(404).json({ message: 'Answer not found' });
+            }
+            existingAnswer.text = req.body.text; // Assuming you want to update the text
+            existingAnswer.ans_date_time = new Date(); // Update the answer date and time
+            await existingAnswer.save();
 
-        res.status(201).json(newAnswer);
+            res.status(200).json(existingAnswer);
+        } else {
+            // Create and save the new answer
+            const newAnswer = new Answers({
+                text: req.body.text,
+                ans_by: username,
+                ans_date_time: new Date(),
+            });
+            await newAnswer.save();
+
+            // Add the new answer ID to the question's answers array and save the question
+            question.answers.push(newAnswer._id);
+            await question.save();
+
+            res.status(201).json(newAnswer);
+        }
     } catch (error) {
-        console.log("bad answer, failed to post");
+        console.log("Bad answer, failed to post");
         console.error(error);
         res.status(400).json({ message: error.message });
     }
 });
+
 
 const postComment = async (req, res) => {
     const { Type, userId, signedIn } = req;

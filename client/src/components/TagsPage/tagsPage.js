@@ -5,17 +5,22 @@ import {fetchTags, fetchQuestionsSet, renderTaggedQuestions} from "../../request
 export default function Tags({ setRenderedQuestions, setMode, tagsUser }) {
     const [tags, setTags] = useState([]);
     const [allQuestions, setAllQuestions] = useState([]);
+
     useEffect(() => {
-        if(tagsUser){
-            setTags(tagsUser);
-            console.log(tagsUser)
-            fetchQuestionsSet(setAllQuestions);
-        }
-        else{
-            // Fetch all tags
-            fetchTags(setTags);
-            fetchQuestionsSet(setAllQuestions);
-        }
+        const updateTagsAndQuestions = async () => {
+            if (tagsUser) {
+                let set = new Set(tagsUser.map(tag => tag.name));  // Ensure uniqueness based on tag name
+                let uniqueTags = Array.from(set).map(name => ({ name, _id: tagsUser.find(tag => tag.name === name)._id }));
+                setTags(uniqueTags);
+                console.log(tagsUser);
+                fetchQuestionsSet(setAllQuestions);
+            } else {
+                // Fetch all tags
+                fetchTags(setTags);
+                fetchQuestionsSet(setAllQuestions);
+            }
+        };
+        updateTagsAndQuestions();
     }, [tagsUser]);
 
     return (
@@ -29,15 +34,18 @@ export default function Tags({ setRenderedQuestions, setMode, tagsUser }) {
             </div>
             <div className="tagsAndQuestions">
                 {tags.map(t => {
-                    // Assuming each tag has an id field that's used in question's tagIds
                     let tagQuestions = allQuestions.filter(q => q.tags.includes(t._id));
                     let numTagQuestions = tagQuestions.length;
-                    return (
-                        <div className="tag" key={t._id}>
-                            <button className="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
-                            <h4 className='tagHeading'>{numTagQuestions} Question{numTagQuestions !== 1 ? 's' : ''}</h4>
-                        </div>
-                    )
+                    if(numTagQuestions > 0) {
+                        return (
+                            <div className="tag" key={t._id}>
+                                <button className="tagLink" onClick={() => {setMode(0); renderTaggedQuestions(setRenderedQuestions, t._id)}}>{t.name}</button>
+                                <h4 className='tagHeading'>{numTagQuestions} Question{numTagQuestions !== 1 ? 's' : ''}</h4>
+                            </div>
+                        )
+                    }
+                    else
+                        return null;
                 })}
             </div>
         </div>

@@ -11,6 +11,7 @@ import CommentForm from '../Forms/commentForm';
 export default function Col2({ mode, setMode, renderedQuestions, setRenderedQuestions, visitedQuestion, setVisitedQuestion, user}) {
     const [objToComment, setObjToComment] = useState(null);
     const [editQuestion, setEditQuestion] = useState(null);
+    const [editAnswer, setEditAnswer] = useState(null);
 
     return (
         <div id="col2">
@@ -22,11 +23,11 @@ export default function Col2({ mode, setMode, renderedQuestions, setRenderedQues
                         case 1:
                             return <Tags setRenderedQuestions={setRenderedQuestions} setMode={setMode}/>;
                         case 2:
-                            return <SinglePost qstn={visitedQuestion} setQstn={setVisitedQuestion} setMode={setMode} user={user} setObjToComment={setObjToComment} setEditQuestion={setEditQuestion}/>
+                            return <SinglePost qstn={visitedQuestion} setQstn={setVisitedQuestion} setMode={setMode} user={user} setObjToComment={setObjToComment} setEditQuestion={setEditQuestion} setEditAnswer={setEditAnswer}/>
                         case 3:
                             return <QuestionsForm setMode={setMode} setRenderedQuestions={setRenderedQuestions} user={user} question={editQuestion}/>
                         case 4:
-                            return <AnswerForm setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user}/>
+                            return <AnswerForm setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user} editAnswer={editAnswer}/>
                         case 5:
                             return <UserProfile setMode={setMode} qstn={visitedQuestion} setVisitedQuestion={setVisitedQuestion} user={user} renderedQuestions={renderedQuestions} setRenderedQuestions={setRenderedQuestions}/>;
                         case 6:

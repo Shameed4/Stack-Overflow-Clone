@@ -7,7 +7,7 @@ import AnswerVote from './Voting/answerVote';
 import CommentCollection from './commentCollection';
 import Pagination from '../pagination';
 
-export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment, setEditQuestion}) {
+export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment, setEditQuestion, setEditAnswer}) {
     const [answers, setAnswers] = useState([]);
     const [qstnComments, setQstnComments] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
@@ -68,7 +68,14 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                             </div>
                             <AnswerVote ans={ans}></AnswerVote>
                         </div>
-                        <CommentCollection obj={ans} setObjToComment={setObjToComment} setMode={setMode}></CommentCollection>
+                        <CommentCollection obj={ans} setObjToComment={setObjToComment}
+                                           setMode={setMode}></CommentCollection>
+                        {
+                            user.username === ans.ans_by ? <button onClick={()=>{
+                                setMode(4)
+                                setEditAnswer(ans)
+                            }}>Edit</button> : null
+                        }
                     </div>
                 ))}
             </div>
