@@ -591,3 +591,19 @@ a:hover {
     display: flex;
     flex-direction: column;
 }
+
+
+button {
+    background-color: rgb(0, 136, 255);
+    color: white;
+    padding: 0 6px;
+    border: 2px solid black;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+}
+button:hover{
+    background-color: rgb(64, 107, 135);
+}
