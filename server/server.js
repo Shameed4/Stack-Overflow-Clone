@@ -479,20 +479,25 @@ app.get('/api/users/:username/details', async (req, res) => {
             answers: { $in: answerIds }
         })
 
-        // Aggregate tags from questions
-        const tags = questions.reduce((acc, question) => {
-            question.tags.forEach(tag => {
-                if (!acc.some(t => t._id.equals(tag._id))) {
-                    acc.push(tag);
+
+        let tags = []
+
+        let tagObjects = await Tags.find();
+
+        questions.forEach((question) => {
+            tagObjects.forEach((tag) => {
+                if (question.tags.includes(tag.id)) {
+                    tags.push({_id: tag.id, name: tag.name});
                 }
             });
-            return acc;
-        }, []);
+        });
+
 
         res.json({
             questions: questions,
             answers: questionsWithUserAnswers,
-            tags: tags.map(t => t._id)
+            tags: tags,
+            tagsNames: tags
         });
     } catch (error) {
         console.error(error);

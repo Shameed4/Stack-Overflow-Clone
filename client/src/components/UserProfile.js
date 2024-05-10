@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { timeToString } from "../modules/helper-funtions";  // Corrected typo in filename
 import AllPosts from "./AllPosts/allPosts";
+import Tags from "../components/TagsPage/tagsPage";
 
 export default function UserProfile({ setMode, visitedQuestion, setVisitedQuestion, user, renderedQuestions, setRenderedQuestions }) {
     const [questions, setQuestions] = useState([]);
@@ -40,6 +41,7 @@ export default function UserProfile({ setMode, visitedQuestion, setVisitedQuesti
                     <AllPosts renderedQuestions={answers} setRenderedQuestions={setRenderedQuestions}
                               setVisitedQuestion={setVisitedQuestion} setMode={setMode} user={user}/>
                     <h2>All the tags created by the user:</h2>
+                    <Tags setRenderedQuestions={setRenderedQuestions} setMode={setMode} tagsUser={tags}/>
                 </div>
 
             </div>
