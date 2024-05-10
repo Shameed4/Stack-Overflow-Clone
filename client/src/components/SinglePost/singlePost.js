@@ -4,13 +4,16 @@ import { timeToString } from "../../modules/helper-funtions";
 import { fetchQuestion, fetchAnswers, fetchComments } from "../../request-functions/request-functions";
 import QuestionVote from './Voting/questionVote';
 import AnswerVote from './Voting/answerVote';
-import CommentVote from './Voting/commentVote';
 import CommentCollection from './commentCollection';
+import Pagination from '../pagination';
 
 export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment }) {
     const [answers, setAnswers] = useState([]);
     const [qstnComments, setQstnComments] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPageAnswers, setCurrentPageAnswers] = useState([]);
     console.log("Question", qstn);
+
     const updateQuestion = async () => {
         setQstn(await fetchQuestion(qstn));
         fetchAnswers(qstn, setAnswers);
@@ -48,7 +51,7 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
             </div>
 
             <div id="answers">
-                {answers.map(ans => (
+                {currentPageAnswers.map(ans => (
                     <div className="answer">
                         <div className="answer-top" key={ans._id}>
                             <div className="answer-description" dangerouslySetInnerHTML={{__html: ans.text}}></div>
@@ -62,6 +65,8 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                     </div>
                 ))}
             </div>
+
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} setLoadedItems={setCurrentPageAnswers} allItems={answers} itemsPerPage={5}></Pagination>
 
             {/* Console log to check the user state just before rendering the button */}
             {console.log("Current user:", user)}

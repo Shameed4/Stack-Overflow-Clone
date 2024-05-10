@@ -2,13 +2,16 @@ import { useEffect, useState } from "react"
 import { fetchComments } from "../../request-functions/request-functions";
 import { timeToString } from "../../modules/helper-funtions";
 import CommentVote from "./Voting/commentVote";
+import Pagination from "../pagination";
 
 export default function CommentCollection({ obj, setObjToComment, setMode }) {
     const [comments, setComments] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPageComments, setCurrentPageComments] = useState([]);
+
     useEffect(() => {
         fetchComments(obj, setComments);
-        console.log("Obj", obj);
-    }, [])
+    }, []);
     
     return (
         <div className="comments">
@@ -17,7 +20,7 @@ export default function CommentCollection({ obj, setObjToComment, setMode }) {
                 setMode(6);
             }}>Comment</button>
             
-            {comments.map(comment => {
+            {currentPageComments.map(comment => {
                 return (
                     <div className="comment">
                         <CommentVote com={comment}></CommentVote>
@@ -27,6 +30,7 @@ export default function CommentCollection({ obj, setObjToComment, setMode }) {
                     </div>
                 );
             })}
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} setLoadedItems={setCurrentPageComments} allItems={comments} itemsPerPage={3}></Pagination>
         </div>
     )
 }
