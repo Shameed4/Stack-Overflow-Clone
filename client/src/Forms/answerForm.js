@@ -34,7 +34,7 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion, editAnsw
 
         const answerData = {
             text: convertedText,
-            ans_id: answerText.ans_id
+            ans_id: editAnswer._id
         };
 
         try {
