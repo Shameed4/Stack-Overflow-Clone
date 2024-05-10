@@ -7,7 +7,7 @@ import AnswerVote from './Voting/answerVote';
 import CommentCollection from './commentCollection';
 import Pagination from '../pagination';
 
-export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment }) {
+export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComment, setEditQuestion}) {
     const [answers, setAnswers] = useState([]);
     const [qstnComments, setQstnComments] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
@@ -32,6 +32,13 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                         <span className="answerCount bold">{qstn.answers.length} answer{qstn.answers.length !== 1 ? 's' : ''}</span>
                         <span id="question-title" className="bold">{qstn.title}</span>
                         <span className="btn-container"><QstnButton setMode={setMode}/></span>
+                        {user.username === qstn.asked_by ?
+                            <button onClick={()=>{
+                                setMode(3);
+                                setEditQuestion(qstn);
+                            }}
+                            >Edit</button>
+                            : null}
                     </div>
 
                     <div id="postTop2">

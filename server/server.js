@@ -136,24 +136,42 @@ app.post('/api/questions', verifySession, async (req, res) => {
     if (!signedIn)
         return res.status(401).json("Not signed in");
 
+    const questionId = req.body._id;  // Check if a question ID was provided
+
     try {
         // Insert tags and get their IDs
         const tagIds = await insertTagsAndGetIds(req.body.tags);
         const user = await Users.findById(userId);
         const username = user.username;
 
-        // Create and save the new question with tag IDs
-        const newQuestion = new Questions({
-            title: req.body.title,
-            text: req.body.text,
-            tags: tagIds,
-            asked_by: username,
-            ask_date_time: new Date(),
-            answers: [],
-        });
-        await newQuestion.save();
+        if (questionId) {
+            // If questionId exists, update the existing question
+            const question = await Questions.findById(questionId);
+            if (!question) {
+                return res.status(404).json({ message: "Question not found" });
+            }
 
-        res.status(201).json(newQuestion);
+            // Update question details
+            question.title = req.body.title;
+            question.text = req.body.text;
+            question.tags = tagIds;
+
+            await question.save();
+            res.status(200).json(question);
+        } else {
+            // No questionId provided, create a new question
+            const newQuestion = new Questions({
+                title: req.body.title,
+                text: req.body.text,
+                tags: tagIds,
+                asked_by: username,
+                ask_date_time: new Date(),
+                answers: [],
+            });
+
+            await newQuestion.save();
+            res.status(201).json(newQuestion);
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
