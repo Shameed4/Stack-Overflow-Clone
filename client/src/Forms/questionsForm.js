@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import {renderNewestQuestions} from "../request-functions/request-functions"
 import { validateAndConvertHyperlinks } from '../modules/helper-funtions';
 
-export default function QuestionsForm({setMode, setRenderedQuestions}) {
-    const [title, setTitle] = useState('');
-    const [questionText, setQuestionText] = useState('');
+export default function QuestionsForm({setMode, setRenderedQuestions, question}) {
+    const [title, setTitle] = useState(question ? question.title : '');
+    const [questionText, setQuestionText] = useState(question ? question.text : '');
     const [tags, setTags] = useState('');
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (question && question.tags) {
+            fetchTagNames(question.tags);
+        }
+    }, [question]);
+
+    const fetchTagNames = async (tagIds) => {
+        try {
+            const tagPromises = tagIds.map(tid => axios.get(`http://localhost:8000/api/tags/${tid}`));
+            const tagResponses = await Promise.all(tagPromises);
+            const tagNames = tagResponses.map(response => response.data.name);
+            setTags(tagNames.join(' '));
+        } catch (error) {
+            console.error('Failed to fetch tags:', error);
+            setErrors(prev => ({ ...prev, tags: 'Failed to load tags' }));
+        }
+    };
+
+    console.log(question);
+
 
     const validateForm = () => {
         let formIsValid = true;
@@ -60,7 +81,9 @@ export default function QuestionsForm({setMode, setRenderedQuestions}) {
         const questionData = {
             title,
             text: convertedText,
-            tags: tags.toLowerCase().split(" ").filter(tag => tag.length > 0)
+            tags: tags.toLowerCase().split(" ").filter(tag => tag.length > 0),
+            _id: question ? question._id : null,
+
         };
 
         try {
@@ -87,7 +110,7 @@ export default function QuestionsForm({setMode, setRenderedQuestions}) {
                 <div className="title" id="questionsTitle">
                     <h2>Question Title*</h2>
                     <h6>Limit title to 100 characters or less</h6>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /><br></br>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className='QUESTIONTITLE'/><br></br>
                     {errors.title && <span className="errorIndicate" style={{color: 'red'}}>{errors.title}</span>}
                 </div>
                 <div className="questionInput" id="questionInput">
