@@ -83,7 +83,6 @@ export default function QuestionsForm({setMode, setRenderedQuestions, question})
             text: convertedText,
             tags: tags.toLowerCase().split(" ").filter(tag => tag.length > 0),
             _id: question ? question._id : null,
-
         };
 
         try {

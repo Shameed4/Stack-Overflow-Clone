@@ -6,6 +6,8 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion, editAnsw
     const [answerText, setAnswerText] = useState(editAnswer ? editAnswer.text : '');
     const [errors, setErrors] = useState({});
 
+    console.log("Qstn being answered", qstn);
+
     const validateForm = () => {
         let formIsValid = true;
         let errors = {};
@@ -34,7 +36,7 @@ export default function AnswerForm({ setMode, qstn, setVisitedQuestion, editAnsw
 
         const answerData = {
             text: convertedText,
-            ans_id: editAnswer._id
+            ans_id: editAnswer ? editAnswer._id : null
         };
 
         try {

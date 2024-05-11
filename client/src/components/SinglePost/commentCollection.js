@@ -24,9 +24,11 @@ export default function CommentCollection({ obj, setObjToComment, setMode }) {
                 return (
                     <div className="comment">
                         <CommentVote com={comment}></CommentVote>
-                        <span className="answerer">{comment.com_by}</span>
-                        <span className="posted-time"> commented {timeToString(comment.com_date_time)}</span>
-                        <span>{comment.text}</span>
+                        <span>
+                            <span className="answerer"> {comment.com_by} </span>
+                            <span className="posted-time">commented {timeToString(comment.com_date_time)} </span>
+                        </span>
+                        <span className="commentText">{comment.text}</span>
                     </div>
                 );
             })}

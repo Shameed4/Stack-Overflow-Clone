@@ -9,9 +9,13 @@ To create an admin account, do
 
 
 ## Ritesh's Contribution
+- Sign up/login/register, cookies, hashing
+- Editing questions and answers
+- Pagination for questions
 
 ## Sean's Contribution
 - Comments
 - Upvotes
 - Pagination for answers
-- Refactoring
+- Admin page
+- UML diagrams

@@ -447,7 +447,7 @@ app.post('/api/users/login', async (req, res) => {
 
         // Generate a token
         const token = jwt.sign(
-            { userId: user._id, username: user.username, name: user.name},
+            { userId: user._id, username: user.username, name: user.name },
             'goats', // Ensure your secret key is stored safely and is robust enough.
             { expiresIn: '1h' } // Token expires in 1 hour
         );
@@ -476,7 +476,7 @@ app.get('/api/users/verify-session', (req, res) => {
 
         try {
             const user = await Users.findById(decoded.userId);
-            if (! user) return res.status(404).json({ message: 'User not found' });
+            if (!user) return res.status(404).json({ message: 'User not found' });
 
             res.json({ userId: user._id, username: user.username, email: user.email, name: user.name, since: user.since, admin: user.admin });
         } catch (error) {
@@ -532,7 +532,7 @@ app.get('/api/users/:username/details', async (req, res) => {
         questions.forEach((question) => {
             tagObjects.forEach((tag) => {
                 if (question.tags.includes(tag.id)) {
-                    tags.push({_id: tag.id, name: tag.name});
+                    tags.push({ _id: tag.id, name: tag.name });
                 }
             });
         });
@@ -550,6 +550,113 @@ app.get('/api/users/:username/details', async (req, res) => {
     }
 });
 
+app.get('/api/users/:username/details', async (req, res) => {
+    const { username } = req.params;
+    try {
+        // Find the user by username
+        const user = await Users.findOne({ username: username });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Fetch all questions asked by this user
+        const questions = await Questions.find({ asked_by: username })
+
+        // Fetch all answers given by this user to get their IDs
+        const answersByUser = await Answers.find({ ans_by: username }, '_id').exec();
+
+        // Extract just the IDs from the answers
+        const answerIds = answersByUser.map(answer => answer._id);
+
+        // Fetch all questions that contain any of the answer IDs authored by this user
+        const questionsWithUserAnswers = await Questions.find({
+            answers: { $in: answerIds }
+        })
+
+
+        let tags = []
+
+        let tagObjects = await Tags.find();
+
+        questions.forEach((question) => {
+            tagObjects.forEach((tag) => {
+                if (question.tags.includes(tag.id)) {
+                    tags.push({ _id: tag.id, name: tag.name });
+                }
+            });
+        });
+
+
+        res.json({
+            questions: questions,
+            answers: questionsWithUserAnswers,
+            tags: tags,
+            tagsNames: tags
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+const deleteQuestion = async (qid) => {
+    try {
+        const question = await Questions.findById(qid);
+        if (!question) {
+            throw new Error('Question not found');
+        }
+
+        for (const answerId of question.answers) {
+            await deleteAnswer(answerId);
+        }
+
+        await Comments.deleteMany({ _id: { $in: question.comments } });
+
+        const tagsToDelete = [];
+        for (const tagId of question.tags) {
+            const associatedQuestionsCount = await Questions.countDocuments({ tags: tagId, _id: { $ne: qid } });
+            if (associatedQuestionsCount === 0) {
+                tagsToDelete.push(tagId);
+            }
+        }
+
+        await Tags.deleteMany({ _id: { $in: tagsToDelete } });
+
+        console.log(question);
+        await Questions.findByIdAndDelete(question._id);
+
+        return { message: 'Question deleted successfully' };
+    } catch (error) {
+        console.log(error);
+        throw new Error('Failed to delete question');
+    }
+}
+
+const deleteAnswer = async (answerId) => {
+    try {
+        const answer = await Answers.findById(answerId);
+        if (!answer) return;
+
+        await Comments.deleteMany({ _id: { $in: answer.comments } });
+        await Answers.findByIdAndDelete(answer._id);
+
+        return { message: 'Answer deleted successfully' };
+
+    } catch (error) {
+        throw new Error('Failed to delete answer');
+    }
+}
+
+app.delete('/api/questions/:qid', async (req, res) => {
+    try {
+        const result = await deleteQuestion(req.params.qid);
+        res.json(result);
+    } catch (error) {
+        console.error('Failed to delete question:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // Start the server
 const PORT = process.env.PORT || 8000;
@@ -559,9 +666,9 @@ const server = app.listen(PORT, () => {
 
 const test = async () => {
     // console.log(await Answers.find())
-    // console.log(await Questions.find())
+    console.log(await Questions.find())
     // await Users.deleteOne({name: "admin"});
-    console.log(await Users.find());
+    // console.log(await Users.find());
 }
 
 test();

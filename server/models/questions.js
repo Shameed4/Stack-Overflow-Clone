@@ -19,3 +19,5 @@ questionSchema.virtual('url').get(function () {
 });
 
 module.exports = mongoose.model('Question', questionSchema);
+
+

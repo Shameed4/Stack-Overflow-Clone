@@ -6,7 +6,7 @@ export const fetchAnswers = async (qstn, setAnswers) => {
             axios.get(`http://localhost:8000/api/answers/${answerId}`)
         );
         const answersResponses = await Promise.all(answersPromises);
-        const fetchedAnswers = answersResponses.map(response => response.data);
+        const fetchedAnswers = answersResponses.map(response => response.data).sort((a, b) => new Date(b.ans_date_time) - new Date(a.ans_date_time));
         setAnswers(fetchedAnswers);
     } catch (error) {
         console.error('Error fetching answers:', error);
@@ -21,7 +21,7 @@ export const fetchComments = async (obj, setComments) => {
             axios.get(`http://localhost:8000/api/comments/${commentId}`)
         );
         const commentsResponses = await Promise.all(commentsPromises);
-        const fetchedComments = commentsResponses.map(response => response.data);
+        const fetchedComments = commentsResponses.map(response => response.data).sort((a, b) => new Date(b.com_date_time) - new Date(a.com_date_time));
         console.log("Fetched comments", fetchedComments);
         setComments(fetchedComments);
     } catch (error) {
@@ -242,6 +242,16 @@ export const toggleUserDownvote = async (type, obj) => {
         return true;
     } catch (error) {
         console.error('Error toggling downvote', error)
+        return false;
+    }
+}
+
+export const deleteQuestion = async ({_id}) => {
+    try {
+        axios.delete(`http://localhost:8000/api/questions/${_id}`)
+        return true;
+    } catch (error) {
+        console.error('Error deleting question', error);
         return false;
     }
 }

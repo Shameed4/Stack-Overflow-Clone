@@ -57,6 +57,10 @@ body {
     background-color: lightgray;
 }
 
+#col1>div.gray {
+    background-color: rgb(194, 193, 193);
+}
+
 #col2 {
     grid-area: col2;
     width: 100%;
@@ -70,6 +74,11 @@ body {
 .comment {
     display: flex;
     font-size: 0.75rem;
+    align-items: center;
+}
+
+.comment > .commentText {
+    margin-left: 5px;
 }
 
 #questionsGrid {
@@ -504,12 +513,12 @@ a:hover {
 }
 
 .prevAndNext button{
-    margin: 5px;
+    margin: 2px;
     background-color: #e7700d;
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     cursor: pointer;
 }
 

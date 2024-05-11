@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Question from "./question";
 import QstnButton from "../askQstnBtn";
 import { renderNewestQuestions, renderActiveQuestions, renderUnansweredQuestions } from "../../request-functions/request-functions";
@@ -7,7 +7,10 @@ import Pagination from '../pagination';
 export default function AllPosts({ renderedQuestions, setRenderedQuestions, setVisitedQuestion, setMode, user}) {
     const [currentPage, setCurrentPage] = useState(0);
     const [currentPageQuestions, setCurrentPageQuestions] = useState([]);
-    console.log(user);
+
+    useEffect(() => {
+        renderNewestQuestions(setRenderedQuestions)
+    }, [])
 
     return (
         <div className="AllPosts">
