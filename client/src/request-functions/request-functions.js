@@ -2,10 +2,12 @@ import axios from "axios";
 
 export const fetchAnswers = async (qstn, setAnswers) => {
     try {
+        console.log("Fetched answers qstn", qstn);
         const answersPromises = qstn.answers.map(answerId =>
             axios.get(`http://localhost:8000/api/answers/${answerId}`)
         );
         const answersResponses = await Promise.all(answersPromises);
+        console.log("Fetched answers response", answersResponses);
         const fetchedAnswers = answersResponses.map(response => response.data).sort((a, b) => new Date(b.ans_date_time) - new Date(a.ans_date_time));
         setAnswers(fetchedAnswers);
     } catch (error) {
@@ -166,7 +168,7 @@ export const fetchQuestions = async () => {
 export const fetchQuestionsSet = async (setAllQuestions) => {
     try {
         const questionsResponse = await axios.get('http://localhost:8000/api/questions');
-        setAllQuestions(questionsResponse.data);
+        setAllQuestions(questionsResponse.data.sort());
         console.log(questionsResponse.data)
     } catch (error) {
         console.error('Error fetching questions:', error);
@@ -246,9 +248,21 @@ export const toggleUserDownvote = async (type, obj) => {
     }
 }
 
-export const deleteQuestion = async ({_id}) => {
+export const deleteQuestion = async ({_id}, setMode) => {
     try {
-        axios.delete(`http://localhost:8000/api/questions/${_id}`)
+        await axios.delete(`http://localhost:8000/api/questions/${_id}`)
+        setMode(0);
+        return true;
+    } catch (error) {
+        console.error('Error deleting question', error);
+        return false;
+    }
+}
+
+export const deleteAnswer = async ({_id}, setMode) => {
+    try {
+        await axios.delete(`http://localhost:8000/api/answers/${_id}`)
+        setMode(2);
         return true;
     } catch (error) {
         console.error('Error deleting question', error);

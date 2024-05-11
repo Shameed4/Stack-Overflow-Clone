@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QstnButton from "../askQstnBtn";
 import { timeToString } from "../../modules/helper-funtions";
-import { fetchQuestion, fetchAnswers, fetchComments, deleteQuestion } from "../../request-functions/request-functions";
+import { fetchQuestion, fetchAnswers, fetchComments, deleteQuestion, deleteAnswer } from "../../request-functions/request-functions";
 import QuestionVote from './Voting/questionVote';
 import AnswerVote from './Voting/answerVote';
 import CommentCollection from './commentCollection';
@@ -32,10 +32,10 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                         <span className="answerCount bold">{qstn.answers.length} answer{qstn.answers.length !== 1 ? 's' : ''}</span>
                         <span id="question-title" className="bold">{qstn.title}</span>
                         <span className="btn-container"><QstnButton setMode={setMode} /></span>
-                        {user.admin || user.username === qstn.asked_by ?
+                        {user && (user.admin || user.username === qstn.asked_by) ?
                             <>
                                 <button onClick={() => { setMode(3); setEditQuestion(qstn) }}>Edit</button>
-                                <button onClick={() => { setMode(0); deleteQuestion(qstn) }}>Delete</button>
+                                <button onClick={() => { deleteQuestion(qstn, setMode); }}>Delete</button>
                             </>
                             : null}
                     </div>
@@ -68,10 +68,10 @@ export default function SinglePost({ qstn, setQstn, setMode, user, setObjToComme
                             <AnswerVote ans={ans}></AnswerVote>
                         </div>
                         {
-                            user.admin || user.username === ans.ans_by ? <button onClick={() => {
-                                setMode(4)
-                                setEditAnswer(ans)
-                            }}>Edit</button> : null
+                            user && (user.admin || user.username === ans.ans_by) ? <>
+                                <button onClick={() => { setMode(4); setEditAnswer(ans) }}>Edit</button>
+                                <button onClick={() => { deleteAnswer(ans, setMode) }}>Delete</button>
+                            </> : null
                         }
                         <CommentCollection obj={ans} setObjToComment={setObjToComment}
                             setMode={setMode}></CommentCollection>

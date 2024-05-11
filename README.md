@@ -2,11 +2,11 @@
 Add design docs in *images/*
 
 ## Instructions to setup and run project
-To create an admin account, do 
+To create an admin account, run node init.js "email password", including the quotation marks, 
+and replace the email and password with the email/password of your choice.
 
 ## Notes
-
-
+Instead of deleting on user/admin page, just delete on the Answers page directly
 
 ## Ritesh's Contribution
 - Sign up/login/register, cookies, hashing
@@ -17,5 +17,5 @@ To create an admin account, do
 - Comments
 - Upvotes
 - Pagination for answers
-- Admin page
+- Admin
 - UML diagrams

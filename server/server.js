@@ -657,6 +657,16 @@ app.delete('/api/questions/:qid', async (req, res) => {
     }
 });
 
+app.delete('/api/answers/:aid', async (req, res) => {
+    try {
+        const result = await deleteAnswer(req.params.aid);
+        res.json(result);
+    } catch (error) {
+        console.error('Failed to delete answer:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // Start the server
 const PORT = process.env.PORT || 8000;
